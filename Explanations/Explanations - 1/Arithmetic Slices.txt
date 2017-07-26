@@ -1,0 +1,26 @@
+----------------------------------------
+
+Keep track of the number of arithmetic progressions ending at i.
+Sum over all i.
+
+no_of_aps_till_here = a[i] - a[i - 1] == a[i - 1] - a[i - 2] ? no_of_aps_till_here + 1 : 0
+sum += no_of_aps_till_here
+
+O(1) memory.
+
+class Solution {
+public:
+    int numberOfArithmeticSlices(vector<int>& A) {
+        
+        int number_of_aps = 0, no_of_aps_till_here = 0;
+        
+        for(unsigned int i = 2; i < A.size(); i++)
+        {
+            no_of_aps_till_here = (A[i] - A[i - 1] == A[i - 1] - A[i - 2] ? no_of_aps_till_here + 1 : 0);
+            number_of_aps += no_of_aps_till_here;
+        }
+        
+        return number_of_aps;
+        
+    }
+};
