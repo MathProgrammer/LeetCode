@@ -1,0 +1,24 @@
+
+-----------------------------------------------------------
+
+Keep track of the maximum subarray ending at every point and return the maximum.
+The subarray ending at positin i, is either A[i] + max_ending at i - 1 or A[i], whichever is greater.
+
+
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        
+        int max_subarray_sum = nums[0];
+        int max_subarray_sum_till = 0;
+        
+        for(unsigned int i = 0; i < nums.size(); i++)
+        {
+            max_subarray_sum_till = max(max_subarray_sum_till + nums[i], nums[i]) ;
+            max_subarray_sum = max(max_subarray_sum, max_subarray_sum_till);
+        }
+        
+        return max_subarray_sum;
+        
+    }
+};

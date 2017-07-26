@@ -1,0 +1,30 @@
+
+-----------------------------------------
+
+The answer is the fibonacci numbers.
+
+f(1) = 1, f(2) = 2
+
+We may either take a 1-step, now we must take i - 1 steps in f(i - 1) ways.
+Or me may start with a 2-step and now take i-2 steps in f(i - 2) ways.
+
+f(n) = f(n - 1) + f(n - 2)
+
+------------------------------------
+
+class Solution {
+public:
+    int climbStairs(int n) {
+        
+        vector <int> no_of_ways_to_climb(n + 1, 0);
+        
+        no_of_ways_to_climb[1] = 1; 
+        no_of_ways_to_climb[2] = 2;
+        
+        for(int i = 3; i <= n; i++){
+            no_of_ways_to_climb[i] = no_of_ways_to_climb[i - 1] + no_of_ways_to_climb[i - 2];
+        }
+        
+        return no_of_ways_to_climb[n];
+    }
+};
