@@ -1,0 +1,38 @@
+---------------------------------------------
+
+A dimension of the DP can be dropped to make the solution O(n) space.
+
+Now, we just store f(i) ... f(i) is the minimum sum starting from the first element of the i-th column.
+
+
+Initially, f(column) = T(i, column), if i = n.
+
+After that, n-1 passes are done over f.
+
+In the j-th iteration, f(column) = T(i, column) + min{f(column), f(column + 1)} ... We can start either from column or column + 1. in the next row.
+
+The answer is f(0) in the end.
+
+--------------------------------
+
+class Solution {
+public:
+    int minimumTotal(vector<vector<int>>& triangle) {
+        
+        
+        vector <int> minimum_sum_starting_from_column(triangle.size());
+        
+        for(int row = triangle.size() - 1; row >= 0; row--)
+        {
+            for(int column = 0; column < triangle[row].size(); column++)
+            {
+                if(row == triangle.size() - 1)
+                    minimum_sum_starting_from_column[column] = triangle[row][column];
+                else
+                    minimum_sum_starting_from_column[column] = triangle[row][column] + min(minimum_sum_starting_from_column[column], 
+                                                                       minimum_sum_starting_from_column[column + 1]);
+            }
+        }
+        return minimum_sum_starting_from_column[0];
+    }
+};
