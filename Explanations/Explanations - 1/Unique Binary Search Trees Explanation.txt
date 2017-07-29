@@ -1,0 +1,41 @@
+
+-----------------------------------------
+
+The Catalan NUmbers count this. Notice that if there are n nodes in a tree, then we can allocate k in the left subtree and n-1 - k in the right subtree ...
+
+That's the recurrence right there ! Optimal substructure.
+
+For convenienve f(0) = 1
+f(1) = 1,
+
+f(n) = sum(f(k)*f(n-1-k)) ... where k ranges from 0 to n-1 ... when k = 0, tree is skewed to right and k = n - 1, it is skewed to the left.
+
+I was very surprised to see overflow didn't occur.
+
+--------------------------------------------------
+
+class Solution {
+public:
+    int numTrees(int n) {
+
+        vector <int> no_of_trees_of_size(n + 1, 0);
+
+        for(int tree_i = 0; tree_i <= n; tree_i++)
+        {
+            if(tree_i <= 1)
+                no_of_trees_of_size[tree_i] = 1;
+            else
+            {
+                for(int left_subtree_size = 0; left_subtree_size <= tree_i - 1; left_subtree_size++)
+                {
+                    int no_of_left_subtrees = no_of_trees_of_size[left_subtree_size];
+                    int no_of_right_subtrees = no_of_trees_of_size[tree_i - 1 - left_subtree_size];
+
+                    no_of_trees_of_size[tree_i] += no_of_left_subtrees*no_of_right_subtrees;
+                }
+            }
+        }
+
+        return no_of_trees_of_size[n];
+    }
+};

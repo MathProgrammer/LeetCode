@@ -1,0 +1,37 @@
+
+------------------------------------------------
+
+It is clear to see the recurrence ...
+
+f(1) = h(1)
+f(2) = max{h(2), h(1)} .... I made a mistake here ... I just wrote f(2) = h(2). Not correct.
+
+f(i) = max{f(i - 1), h(i) + f(i - 2)}
+
+One unexpected bug I had was in handling the empty vector. The loot is 0 in that case but making a DP will cause a runtime error. Handled that error as well.
+
+---------------------------------------------
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        
+        if(nums.size() == 0)
+            return 0;
+        
+        vector <int> maximum_loot(nums.size(), 0);
+        
+        for(unsigned int house_i = 0; house_i < nums.size(); house_i++)
+        {
+            if(house_i == 0)
+                maximum_loot[house_i] = nums[house_i];
+            else if(house_i == 1)
+                maximum_loot[house_i] = max(nums[house_i], maximum_loot[house_i - 1]);
+            else
+                maximum_loot[house_i] = max(nums[house_i] + maximum_loot[house_i - 2], maximum_loot[house_i - 1]);
+        }
+        
+        return maximum_loot[nums.size() - 1];
+        
+    }
+};

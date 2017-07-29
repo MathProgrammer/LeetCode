@@ -1,0 +1,61 @@
+
+--------------------------------------------------
+
+Similar logic as longest palindromic subsequence.
+
+Maintain a boolean matrix ... f(i, j) is true if the string from i to j is a palindrome.
+
+f(i, j) = true if s[i]= s[j] and (f(i + 1, j - 1) = true or i + 1 == j)
+
+Initially, when we start to compute f(i, j) we need information about f(i + 1, j - 1). So, iterating over i from 0 till the end is not good.
+
+Instead iterate over all i's of a given length first ... That way we will have all required states.
+
+
+Initially, f(i, i) = true.
+
+The number of entries where f(i, j) = true is the answer.
+
+-------------------------------------------------------------
+
+class Solution {
+public:
+    int countSubstrings(string s) {
+        
+        typedef vector <int> v_int;
+        vector <v_int> is_palindrome(s.length(), v_int(s.length(), false));
+        
+        for(unsigned int i = 0; i < s.length(); i++)
+            is_palindrome[i][i] = true;
+        int no_of_palindrome_strings = s.length();
+        
+        for(int length = 2; length <= s.length(); length++)
+        {
+            int start = 0;
+            int end = start + (length - 1);
+            
+            for(; end < s.length(); start++, end++)
+            {
+                if(s[start] == s[end])
+                {
+                    if(start + 1 == end)
+                    {
+                        is_palindrome[start][end] = true;
+                        no_of_palindrome_strings++;
+                    }
+                    else
+                    {
+                        if(is_palindrome[start + 1][end - 1])
+                        {
+                            is_palindrome[start][end] = true;
+                            no_of_palindrome_strings++;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return no_of_palindrome_strings;
+    }
+};
+
