@@ -1,0 +1,61 @@
+
+---------------------------------------------------------------
+
+One dimension isn't enough for this quesiton. We need atleast two.
+
+Let f(i, j) be the length of the longest palindromic subsequence in between i and j.
+
+Clearly f(i, i) = 1 for all i ...
+
+now, if s[i] = s[j], then f(i, j) = 2 + f(i + 1, j - 1)
+else f(i, j) = max{f(i + 1, j), f(i, j - 1) }
+
+Of course if there are only two letters, then f(i, j) = 2 + f(i + 1, j - 1), if s[i] = s[j] ... Base case for even length palindrome.
+
+Had to debug a lot of errors here but finally got it.
+
+Notice that to compute f(i, j) we need f(i + 1, j) ... So iterating all i and then all j doesn't work ... because we don't have information about f(i + 1, j)
+when we are computing f(i, j)
+
+To get over this, we fix the LENGTH ... and then iterate over i's ... j = i + (length - 1)
+
+This way, when we are computing f(i, j) ... We will already have f(i + 1, j) and f(i, j - 1) because they have length less than (i, j).
+
+This is a very useful and clever trick in order to fill up this table.
+
+----------------------------------------------------
+
+class Solution {
+public:
+    int longestPalindromeSubseq(string s) {
+
+        vector <vector <int> > longest_palindrome_in_between(s.length(), vector <int>(s.length(), 0));
+
+        for(unsigned int i = 0; i < s.length(); i++)
+            longest_palindrome_in_between[i][i] = 1;
+
+        for(unsigned int length = 2; length <= s.length(); length++)
+        {
+            int start = 0;
+            int end = start + (length - 1);
+
+            for(; end <= s.length() - 1; start++, end++)
+            {
+                if(s[start] == s[end])
+                {
+                    if(start + 1 == end)
+                        longest_palindrome_in_between[start][end] = 2;
+                    else
+                        longest_palindrome_in_between[start][end] = 2 + longest_palindrome_in_between[start + 1][end - 1];
+                }
+                else
+                {
+                    longest_palindrome_in_between[start][end] = max(longest_palindrome_in_between[start + 1][end],
+                                                                    longest_palindrome_in_between[start][end - 1]);
+                }
+            }
+        }
+
+        return longest_palindrome_in_between[0][s.length()-1];
+    }
+};
