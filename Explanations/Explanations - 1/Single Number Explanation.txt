@@ -1,0 +1,21 @@
+Answer is the bitwise XOR of all numbers ...
+
+Consider the i-th bit position ... All the numbers which occur twice, will have their bits set twice ... so XOR-ing them makes them vanish.
+
+Instead of 2, if we knew all numbers came N times, then just maintain a vector that counts the number of times the i-th bit is set in all the numbers.
+
+The perform mod N in all of the bit positions ... (All the numbers which occur N times will cancel out and we will be left with the binary representation of the lonely number)
+
+---------------------------------------------------------
+
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+
+        int answer = 0;
+        for(unsigned int i = 0; i < nums.size(); i++)
+            answer ^= nums[i];
+
+        return answer;
+    }
+};

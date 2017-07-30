@@ -1,0 +1,72 @@
+Initially on a notepad only one character 'A' is present. You can perform two operations on this notepad for each step:
+
+Copy All: You can copy all the characters present on the notepad (partial copy is not allowed).
+Paste: You can paste the characters which are copied last time.
+Given a number n. You have to get exactly n 'A' on the notepad by performing the minimum number of steps permitted. Output the minimum number of steps to get n 'A'.
+
+---------------------------------------------------------
+
+I would never have suspected this is a number theory question.
+
+I noticed that if the number is even, then f(2n) = f(n) + 2 [1 copy, 1 paste].
+I couldn't find a similar reasoning for 3, 5, 7 so I thought f(n) = 1 + (n - 1)  = n for odd n. [1 copy, n - 1 pastes].
+
+And then after submitting I noticed that f(9) = 6 ... We get 3 on the screen, and then 1 copy and 2 selects. 
+
+Then it hit me ... We want to minimise the number of pastes we perform at the END. 
+
+N = a x b, 
+
+Find the smallest factor of N > 1 ... Let it be a. If a is the smallest factor, then b is the largest factor < N. 
+
+We want to perform 'a' pastes after we have 'b' on the screen. 
+
+So, number of paste operations = (N-b)/b ... Because we already have 'b' As on the screen. We just increase it in steps of 'b'. I made a mistake by writing (N/b) initially
+This is not correct. Since we already have 'b' As on the screen. 
+
+So, f(i) = 0, if i = 1
+f(i) = i, if i is prime. [1 copy and i-1 pastes]
+
+f(i) = f(b) + 1 + (N-b)/b, where b is the largest factor of i otherwise.
+
+-------------------------------------------------
+
+class Solution {
+public:
+
+    int find_largest_factor_of(int n){
+
+        for(int smallest_factor = 2; smallest_factor*smallest_factor <= n; smallest_factor++)
+            if(n%smallest_factor == 0)
+                return (n/smallest_factor);
+
+        return n;
+    }
+
+    int minSteps(int n) {
+
+        vector <int> minimum_steps_for(n + 1, 0);
+
+        for(int i = 0; i <= n; i++)
+        {
+            if(i <= 1)
+            {
+                minimum_steps_for[i] = 0;
+            }
+            else
+            {
+                int largest_factor = find_largest_factor_of(i);
+
+                if(largest_factor == i) //i is prime
+                    minimum_steps_for[i] = i;
+                else
+                {
+                    int no_of_copies = (i - largest_factor)/largest_factor; //largest_factor As are on screen
+                    minimum_steps_for[i] = minimum_steps_for[largest_factor] + 1 + no_of_copies;
+                }
+            }
+        }
+
+        return minimum_steps_for[n];
+    }
+};

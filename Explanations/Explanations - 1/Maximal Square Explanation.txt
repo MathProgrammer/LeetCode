@@ -1,0 +1,58 @@
+
+---------------------------------------------------------------
+
+This is a well known problem. 
+
+Maintain a 2 dimensional matrix.
+
+f(i, j) = M(i, j) initially.
+
+Let f(i, j) be the maximum square size that ends at (i, j).
+
+Now after that go in row major order to all the vertices.
+
+f(i, j) = 0, if M(i, j) = 0
+f(i, j) = 1 + min{f(i, j - 1), f(i - 1, j), f(i - 1, j - 1)}, if M(i, j) = 1 and the other squares exist.
+
+The maximum f(i, j) is the answer. 
+
+Here the question is asking for the number of squares in this maximal square, not the size of the square side. So, just return it's square.
+
+The logic was correct but I took more time in handling the case with the empty vector because the input wasn't taken from STDIN.
+Another trick was that the input was char array and not int array so had to convert too.
+
+---------------------------------------------------------------
+
+class Solution {
+public:
+
+    int min_3(int a, int b, int c){
+        return min(a, min(b, c));
+    }
+
+    int maximalSquare(vector< vector<char> >& matrix) {
+
+        typedef vector <int> v_int;
+        vector <v_int> maximum_square_ending_here(matrix.size());
+
+        int maximum_square = 0;
+        for(unsigned int row = 0; row < matrix.size() ; row++)
+        {
+            for(unsigned int column = 0; column < matrix[row].size(); column++)
+            {
+                if(row == 0 ||  column == 0 || matrix[row][column] == '0')
+                    maximum_square_ending_here[row].push_back(matrix[row][column] - '0');
+                else
+                    if(matrix[row][column] == '1')
+                        maximum_square_ending_here[row].push_back(1 + min_3(maximum_square_ending_here[row][column - 1],
+                                                                     maximum_square_ending_here[row - 1][column - 1],
+                                                                     maximum_square_ending_here[row - 1][column]) );
+
+                maximum_square = max(maximum_square, maximum_square_ending_here[row][column]);
+            }
+        }
+
+        int no_of_squares = maximum_square*maximum_square;
+        return no_of_squares;
+    }
+};
