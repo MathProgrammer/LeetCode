@@ -1,0 +1,19 @@
+The only trick in this problem is that 0 must be returned in case of overflow. So, rev must be stored in a 64 bit type.
+Apart from that write != 0, instead of > 0 to accomodate negative numbers.
+
+-------------------------------------------------
+
+class Solution {
+public:
+    int reverse(int x) {
+
+        long long reverse = 0;
+        while(x != 0)
+        {
+            reverse = reverse*10 + x%10;
+            x /= 10;
+        }
+
+        return (abs(reverse) > INT_MAX  ? 0 : reverse);
+    }
+};
