@@ -1,0 +1,23 @@
+Adding 1 to n-1 elements, is equivalent to decreasing 1 from 1 element with respect to making all elements equal.
+
+So, find the minimum in O(n) time. And then number of operations = sum(a[i] - min)
+
+--------------------------------------------------------------
+
+class Solution {
+public:
+    int minMoves(vector<int>& nums) {
+        
+        const int oo = INT_MAX;
+        int minimum = oo;
+        
+        for(unsigned int i = 0; i < nums.size(); i++)
+            minimum = min(minimum, nums[i]);
+        
+        int no_of_operations = 0;
+        for(unsigned int i = 0; i < nums.size(); i++)
+            no_of_operations += (nums[i] - minimum);
+        
+        return no_of_operations;
+    }
+};

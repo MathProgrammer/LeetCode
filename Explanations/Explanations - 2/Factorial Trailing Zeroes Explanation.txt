@@ -1,0 +1,20 @@
+
+A 0 is gotten every time a 2 and a 5 multiply themself out ... the number of zeroes is the exponent of 5 in the prime factorisation of n!. 
+Every multiple of 5 contributes 1 to this exponent. Every multiple of 5^2  contributes 2, 5^3 contributes 3 and so on.
+
+---------------
+
+class Solution {
+public:
+    int trailingZeroes(int n) {
+
+        int no_of_zeroes = 0;
+        while(n > 0)
+        {
+            no_of_zeroes += n/5;
+            n = n/5;
+        }
+
+        return no_of_zeroes;
+    }
+};
