@@ -1,0 +1,55 @@
+I mainted a two dimensional vector
+
+f(i, j) is true if the substring from (i to j) is a palindrome. 
+
+f(i, i) = 1
+If a[i] == a[j], 	f(i, j) = true, if f(i + 1, j - 1) is true 
+					if i + 1 = j
+
+if f(i, j) is a palindrome and j - (i - 1) is longer than the length of the longest palindrome, store the substring from s(i, j) as the answer.
+
+The tricky part of this DP is that we need f(i + 1, ...) while computing f(i, ..) ... 
+So, to construct it bottom-up, use the length ... Because we first check substrings of length 1 and then length 2 and so on.
+
+---------------------------------------------
+
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        
+        string answer = "";
+        
+        typedef vector <int> v_int;
+        vector <v_int> palindrome_between(s.length() + 1, v_int (s.length(), false));
+        
+        int string_length = s.length(), longest_palindrome_length = 1;
+        
+        for(int i = 0; i < string_length; i++)
+            palindrome_between[i][i] = true, answer = s[i];
+        
+        for(int length = 2; length <= string_length; length++)
+        {
+            int start = 0; 
+            int end = start + (length - 1);
+            
+            for(; end < string_length ; start++, end++)
+            {
+                if(s[start] == s[end])
+                {
+                    if(start + 1 == end)
+                        palindrome_between[start][end] = true;
+                    else if(palindrome_between[start + 1][end - 1])
+                        palindrome_between[start][end] = true;
+                }
+                
+                if(palindrome_between[start][end] && end - (start - 1) > answer.length())
+                {
+                    longest_palindrome_length = end - (start - 1);
+                    answer = s.substr(start, longest_palindrome_length);
+                }
+            }
+        }
+        
+        return answer;
+    }
+};
