@@ -1,0 +1,17 @@
+This can be solved with a hash table or with brute force comparisons in O(n^2) time. 
+
+But, there's a O(1) solution, Keep track of the sum of the array and subtract it from the expected sum of the first n natural numbers.
+
+class Solution {
+public:
+    int missingNumber(vector<int>& nums) {
+        
+        int n = nums.size();
+        int sum = 0;
+        
+        for(unsigned int i = 0; i < nums.size(); i++)
+            sum += nums[i];
+        
+        return (n*(n + 1))/2 - sum;
+    }
+};
