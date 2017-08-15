@@ -1,0 +1,65 @@
+
+-------------------------------------------------------
+
+This uses the same idea as the previous concept ... You need to keep track of up and down, 
+but this solution is O(1) space and O(n) time vs O(n) space and O(n^2) time.
+
+The key observation is that if the list is A B C D E, 
+
+up[i] and down[i] be the maximum length of subsequences going up and down respectively anywhere AT OR BEFORE i.
+
+this saves us a lot of work.
+
+------------------------------------------------
+
+Let's say E > D, then up[E] = 1 + down[D]
+		     down[E] = down[D]
+
+E < D, then down[E] = 1 + up[D]
+           up[E] = up[D]
+
+If D is the 'down' element of any subsequence of length down[D], we append E at the end of that subsequence.
+If D is not the 'down' element of any subsequence of length down[D], then it means some element before D is the last element of a subsequence going 'down' at it 
+of length down[D]. Let this element be C. If C is the last element of a 'down' sequence going down at it.
+
+Then, c < D < E ... Thus, we can safely append E to the end of the 'down' sequence ending at D.
+
+Thus, we don't need to scan the entire array upto i every time ... Just check one element before it. 
+
+if A[i- 1] < A[i], then up[i] = 1 + down[i - 1]       (because we append A[i] to the end of the subsequence of length down[i - 1])
+   A[i - 1] > A[i], then down[i] = 1 + up[i]           (because we append A[i] to the end of the subsequence of length up[i - 1])
+
+This can be done in O(1) space. 
+
+-------------------------------------------------------
+
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        
+        int no_of_elements = nums.size();
+        
+        int maximum_wiggle_length_up_till_here = 0;
+        int maximum_wiggle_length_down_till_here = 0;
+        
+        for(int i = 0; i < no_of_elements; i++)
+        {
+            if(i == 0)
+            {
+                maximum_wiggle_length_up_till_here = maximum_wiggle_length_down_till_here = 1;
+            }
+            else if(nums[i - 1] < nums[i])
+            {
+                maximum_wiggle_length_up_till_here = 1 + maximum_wiggle_length_down_till_here;
+            }
+            else if(nums[i - 1] > nums[i])
+            {
+                maximum_wiggle_length_down_till_here = 1 + maximum_wiggle_length_up_till_here;
+            }
+        }
+        
+        int maximum_wiggle_sequence_length = max(maximum_wiggle_length_up_till_here, maximum_wiggle_length_down_till_here);
+        
+        return maximum_wiggle_sequence_length;
+    }
+};
