@@ -1,0 +1,53 @@
+
+-------------------------------------------
+
+I got the idea for the second dimension of this DP on my own !
+
+It is similar to longest increasing subsequence, except with an additional twist.
+
+Maintain a vector f(i, j) which represents the maximum wiggle subsequence ending at i that is 'going up' at i if j = 0, and going 'down' at i if j = 1.
+
+f(1, UP) = f(1, DOWN) = 1,
+
+f(i, UP) = max{f(i, UP), 1 + f(j, DOWN)}, for all j such that A[j] < A[i]
+f(i, DOWN) = max{f(i, DOWN), 1 + f(j, UP)}, for all j such that A[j] > A[i]
+
+------------------------------------------
+
+#define GOING_UP 0
+#define GOING_DOWN 1
+#define max_3(a, b, c) max(a, max(b, c))
+
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        
+        int no_of_elements = nums.size();
+        
+        typedef vector <int> v_int;
+        vector <v_int> maximum_wiggle_sequence_ending_here(2, v_int(no_of_elements, 1));
+        
+        int maximum_wiggle_sequence_length = 0;
+        for(int i = 0; i < no_of_elements; i++)
+        {
+            for(int j = 0; j < i; j++)
+            {
+                if(nums[j] < nums[i])
+                {
+                    maximum_wiggle_sequence_ending_here[GOING_UP][i] = max(maximum_wiggle_sequence_ending_here[GOING_UP][i],
+                                                                          1 + maximum_wiggle_sequence_ending_here[GOING_DOWN][j]);
+                }
+                else if(nums[j] > nums[i])
+                {
+                    maximum_wiggle_sequence_ending_here[GOING_DOWN][i] = max(maximum_wiggle_sequence_ending_here[GOING_DOWN][i], 
+                                                                            1 + maximum_wiggle_sequence_ending_here[GOING_UP][j]);
+                }
+            }
+            
+            maximum_wiggle_sequence_length = max_3(maximum_wiggle_sequence_length, maximum_wiggle_sequence_ending_here[GOING_UP][i], 
+                                                  maximum_wiggle_sequence_ending_here[GOING_DOWN][i]);
+        }
+        
+        return maximum_wiggle_sequence_length;
+    }
+};
