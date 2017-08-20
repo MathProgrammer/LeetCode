@@ -1,0 +1,34 @@
+
+----------------------------------------------------
+
+I was surprised to see that an empty tree does not have 0 path sum. It is undefined and false is expected for empty tree and 0.
+
+If root is NULL, 		
+	Answer is always false
+If root is a leaf node, 
+	Check if it's value equals the sum
+If root is not a leaf,
+	Check if either the left or right subtree have sum-root->val
+
+----------------------------------------------------
+
+class Solution
+{
+public:
+    bool hasPathSum(TreeNode* root, int sum) {
+
+        if(root->left == NULL && root->right == NULL)
+        {
+            if(sum - root->val == 0)
+                return true;
+            else
+                return false;
+        }
+        else
+        {
+            hasPathSum(root->left, sum - root->val);
+            hasPathSum(root->right, sum - root->val);
+        }
+
+    }
+};
