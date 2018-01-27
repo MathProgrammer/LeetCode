@@ -2,10 +2,6 @@
 
 using namespace std;
 
-
-static const int MAX_M = 100, MAX_N = 100, MAX_STRINGS = 600;
-int max_strings[MAX_STRINGS + 1][MAX_M + 1][MAX_N + 1];
-
 class Solution {
 public:
 
@@ -25,24 +21,22 @@ public:
             }
         }
 
+        int max_strings[m + 1][n + 1];
         memset(max_strings, 0, sizeof(max_strings));
 
         for(int i = 0; i < no_of_strings; i++)
         {
-            for(int zero = 0; zero <= m; zero++)
+            for(int zero = m; zero >= zeroes[i]; zero--)
             {
-                for(int one = 0; one <= n; one++)
+                for(int one = n; one >= ones[i]; one--)
                 {
                     if(i == 0)
                     {
-                        max_strings[i][zero][one] = (zero >= zeroes[i] && one >= ones[i] ? 1 : 0);
+                        max_strings[zero][one] = 1;
                     }
                     else
                     {
-                        max_strings[i][zero][one] = max_strings[i - 1][zero][one];
-
-                        if(zero >= zeroes[i] && one >= ones[i])
-                            max_strings[i][zero][one] = max(max_strings[i][zero][one], 1 + max_strings[i - 1][zero - zeroes[i]][one - ones[i]]);
+                        max_strings[zero][one] = max(max_strings[zero][one], 1 + max_strings[zero - zeroes[i]][one - ones[i]]);
                     }
                 }
             }
@@ -51,6 +45,7 @@ public:
         if(no_of_strings == 0)
             return 0;
 
-        return max_strings[no_of_strings - 1][m][n];
+        return max_strings[m][n];
     }
 };
+
