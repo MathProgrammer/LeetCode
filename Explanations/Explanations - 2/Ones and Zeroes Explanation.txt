@@ -64,3 +64,72 @@ public:
         return max_strings[no_of_strings - 1][m][n];
     }
 };
+
+------------------------------------------------------------------------
+
+Notice that this DP can be optimised for space. For each f( i, ... ), we only need f(i - 1, ... ) We don't need i - 2, i - 3, etc ...
+
+But, we need to compute it from one = n down to ones[i], zero = m down to zero[i]
+
+So that when you call f(i, z, o) = max{f(i - 1, z, o), 1 + f(i - 1, z - z[i], o - o[i])}
+
+I can try making i-iterations of f(z, o) = max{f(z, o), 1 + f(z - z[i], o - o[i])}
+
+for(i = 0 to N - 1)
+	for(z = zero[i] to m)
+		for(o = one[i] to n)
+			f(z, o) = max{f(z, o), 1 + f(z - z[i], o - o[i])}
+
+The problem is that when you're calling f(z - z[i], o - o[i]) ... the state (z - z[i], o - o[i]) has already been touched. It doesn't contain the value of
+ f(i - 1, z - z[i], o - o[i])
+
+Because it has been touched first. To get over this problem, start from z = m down to z[i] and o = n down to o[i]
+
+----------------------------------------------------
+
+class Solution {
+public:
+
+    int findMaxForm(vector<string>& strs, int m, int n)
+    {
+        int no_of_strings = strs.size();
+
+        vector <int> zeroes(no_of_strings, 0);
+        vector <int> ones(no_of_strings, 0);
+
+        for(int i = 0; i < no_of_strings; i++)
+        {
+            for(int j = 0; j < strs[i].size(); j++)
+            {
+                zeroes[i] += (strs[i][j] == '0');
+                ones[i]   += (strs[i][j] == '1');
+            }
+        }
+
+        int max_strings[m + 1][n + 1];
+        memset(max_strings, 0, sizeof(max_strings));
+
+        for(int i = 0; i < no_of_strings; i++)
+        {
+            for(int zero = m; zero >= zeroes[i]; zero--)
+            {
+                for(int one = n; one >= ones[i]; one--)
+                {
+                    if(i == 0)
+                    {
+                        max_strings[zero][one] = 1;
+                    }
+                    else
+                    {
+                        max_strings[zero][one] = max(max_strings[zero][one], 1 + max_strings[zero - zeroes[i]][one - ones[i]]);
+                    }
+                }
+            }
+        }
+
+        if(no_of_strings == 0)
+            return 0;
+
+        return max_strings[m][n];
+    }
+};
