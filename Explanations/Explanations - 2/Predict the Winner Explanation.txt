@@ -1,0 +1,59 @@
+
+Let f(start, end) represent the maximum score a player can get if gets the array A[start] .... A[end]
+
+Now, if you take the element A[start], you give your opponent A[start + 1] ... A[end]
+
+He takes out f(start + 1, end). 
+
+This leaves you with Sum(start + 1, end) - f(start + 1, end).
+
+Similarly if you take A[end], you give your opponent A[start] ... A[end - 1]
+
+And this gives you Sum(start, end - 1) - f(start, end - 1)
+
+Take_start = A[start] + Sum(start + 1, end) - f(start + 1, end)
+Take_end = A[end] + Sum(start, end - 1) - f(start, end - 1)
+
+f(start, end) = max{Take_start, Take_end}
+
+Base Case, f(i, i) = A[i]
+
+And if length = end - start,
+
+All f(start, end) of length l, must be constructed before f(start, end) of length l + 1. 
+
+Because f(start, end) refers to f(start + 1, end) and f(start, end - 1)
+
+---------------------------------------------------------------
+
+class Solution
+{
+    public:
+
+    bool PredictTheWinner(vector<int>& nums)
+    {
+        int number_of_elements = nums.size();
+
+        vector <int> sum(number_of_elements, 0);
+        for(int i = 0; i < number_of_elements; i++)
+            sum[i] = nums[i] + (i > 0 ? sum[i - 1] : 0);
+
+        int max_score[number_of_elements][number_of_elements];
+
+        for(int i = 0; i < number_of_elements; i++)
+            max_score[i][i] = nums[i];
+
+        for(int length = 2; length <= number_of_elements; length++)
+        {
+            for(int start = 0, end = start + (length - 1); end < number_of_elements; start++, end++)
+            {
+                int take_start = nums[start] + (sum[end] - sum[start] - max_score[start + 1][end]);
+                int take_end   = nums[end] + (sum[end - 1] - sum[start - 1] - max_score[start][end - 1]);
+
+                max_score[start][end] = max(take_start, take_end);
+            }
+        }
+
+        return (2*max_score[0][number_of_elements - 1] >= sum[number_of_elements - 1]);
+    }
+};
