@@ -1,0 +1,88 @@
+
+Let f(x, y) be the size of the plus sign centered at (x, y)
+
+f(x, y) = 0, if grid(x, y) = 0
+
+f(x, y) = 1 + min{down(x + 1, y), up(x - 1, y), left(x, y - 1), right(x, y + 1)}
+
+down(x, y) is the number of consecutive 1s going down from (x, y)
+The up, left and right (x, y) represent the same thing in that direction. 
+
+The idea is that a plus sign of order k is defined as a 1, with (k - 1) consecutive 1s in each direction. 
+
+So, if G(x, y) = 1, then check the minimum number of consecutive 1s in each direction. This guarantees that all the directions have that many 1s and a plus sign of 
+that order can be constructed.
+
+---------------------------------------------------
+
+class Solution
+{
+    public:
+
+    typedef vector <int> v_int;
+
+    int min_4(int a, int b, int c, int d)
+    {
+        return min(min(a, b), min(c, d));
+    }
+
+    int orderOfLargestPlusSign(int N, vector<v_int>& mines)
+    {
+        vector <v_int> grid(N + 2, v_int(N + 2, 0));
+
+        for(int row = 1; row <= N; row++)
+            for(int column = 1; column <= N; column++)
+                grid[row][column] = 1;
+
+        for(int i = 0; i < mines.size(); i++)
+        {
+            int row = mines[i][0] + 1, column = mines[i][1] + 1;
+
+            grid[row][column] = 0;
+        }
+
+        vector <v_int> up_ones(N + 2, v_int(N + 2, 0));
+        vector <v_int> down_ones(N + 2, v_int(N + 2, 0));
+
+        for(int column = 1; column <= N; column++)
+        {
+            up_ones[0][column] = 0;
+            for(int row = 1; row <= N; row++)
+                up_ones[row][column] = (grid[row][column] == 1 ? 1 + up_ones[row - 1][column] : 0);
+
+            down_ones[N + 1][column] = 0;
+            for(int row = N; row >= 1; row--)
+                down_ones[row][column] = (grid[row][column] == 1 ? 1 + down_ones[row + 1][column] : 0);
+        }
+
+        vector <v_int> left_ones(N + 2, v_int(N + 2, 0));
+        vector <v_int> right_ones(N + 2, v_int(N + 2, 0));
+
+        for(int row = 1; row <= N; row++)
+        {
+            left_ones[row][0] = 0;
+            for(int column = 1; column <= N; column++)
+                left_ones[row][column] = (grid[row][column] == 1 ? 1 + left_ones[row][column - 1] : 0);
+
+            right_ones[row][N + 1] = 0;
+            for(int column = N; column >= 1; column--)
+                right_ones[row][column] = (grid[row][column] == 1 ? 1 + right_ones[row][column + 1] : 0);
+        }
+
+        int max_order = 0;
+
+        for(int row = 1; row <= N; row++)
+        {
+            for(int column = 1; column <= N; column++)
+            {
+                if(grid[row][column] == 1)
+                {
+                    int plus_centered_here = 1 + min_4(up_ones[row - 1][column], down_ones[row + 1][column], left_ones[row][column - 1], right_ones[row][column + 1]);
+                    max_order = max(max_order, plus_centered_here);
+                }
+            }
+        }
+
+        return max_order;
+    }
+};
