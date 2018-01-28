@@ -1,0 +1,46 @@
+
+Keep track of the frequency of every element in the array. 
+
+If you delete element i, you earn i*frequency[i] points. 
+
+Every element has to be deleted. 
+
+Let f(i) denote the maximum score attainable if the greatest element of the array was i. 
+
+Now, there are two ways of deleting i from this array. You delete i itself and earn i*frequency[i] + f(i - 2) points because (i - 1) is deleted with it. 
+
+Or you delete (i - 1) and earn (i - 1)*frequency[i - 1] + f(i - 3)
+
+Now, i = 1 or i = 2, then you get max{i*frequency[i], (i - 1)*frequency[i - 1]} points.
+
+------------------------------------------------------------------------------------------------
+
+class Solution 
+{
+    public:
+    int deleteAndEarn(vector<int>& nums) 
+    {
+        const int MAX = 1e4;
+        vector <int> frequency(MAX + 1, 0);
+        
+        for(int i = 0; i < nums.size(); i++)
+            frequency[nums[i]]++;
+        
+        vector <int> max_score_till(MAX + 1, 0);
+        for(int i = 1; i <= MAX; i++)
+        {
+            if(i <= 2)
+            {
+                max_score_till[i] = max(i*frequency[i], (i - 1)*frequency[i - 1]); 
+                continue;
+            }
+            
+            int delete_i_points = i*frequency[i] + max_score_till[i - 2];
+            int delete_i_minus_1_points = (i - 1)*frequency[i - 1] + max_score_till[i - 3];
+            
+            max_score_till[i] = max(delete_i_points, delete_i_minus_1_points); 
+        }
+        
+        return max_score_till[MAX];
+    }
+};
