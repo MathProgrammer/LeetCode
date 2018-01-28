@@ -1,0 +1,23 @@
+Let f(i) be the minimum cost starting from step i. 
+
+f(i) = c(i) + min{f(i + 1), f(i + 2)}
+
+Answer = min{f(0), f(1)}
+
+----------------------------------------------------------
+
+class Solution
+{
+    public:
+    int minCostClimbingStairs(vector<int>& cost)
+    {
+        vector <int> min_cost(cost.size() + 2, 0);
+
+        for(int i = cost.size() - 1; i >= 0; i--)
+        {
+            min_cost[i] = cost[i] + min(min_cost[i + 1], min_cost[i + 2]);
+        }
+
+        return min(min_cost[0], min_cost[1]);
+    }
+};
