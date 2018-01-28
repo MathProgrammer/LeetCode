@@ -1,0 +1,43 @@
+
+Let f(i, j) be the minimum number of coins required to sum up to j using the first i coins. 
+
+Either you use the i-th coin, or you don't. 
+
+If you don't use it, then it is f(i - 1, j)
+
+If you use it, it is 1 + f(i, j - coin[i])
+
+TAke the minimum of these.
+
+It can be optimised for space by eliminating the i-th dimension. 
+
+When we go to f(j - coin[i]), it contains f(i, j - coin[i]) 
+
+When we arrive at f(j), it contains f(i - 1, j).
+
+---------------------------------------------
+
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        
+        const int oo = 1e9;
+        int no_of_coins = coins.size();
+        
+        int minimum_coins[amount + 1];
+        minimum_coins[0] = 0;
+        for(int i = 1; i <= amount; i++)
+            minimum_coins[i] = oo;
+        
+        for(int i = 0; i < no_of_coins; i++)
+        {
+            for(int j = coins[i]; j <= amount; j++)
+            {
+                minimum_coins[j] = min(minimum_coins[j], 1 + minimum_coins[j - coins[i]]);
+            }
+        }
+        
+        return (minimum_coins[amount] >= oo ? -1 : minimum_coins[amount]);
+    }
+};
+
