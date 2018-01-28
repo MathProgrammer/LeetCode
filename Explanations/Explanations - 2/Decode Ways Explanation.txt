@@ -1,0 +1,50 @@
+
+Let f(i) represent the number of ways to decode the first i digits of the message.
+
+Now, there are two options for the i-th digit. Either it stands alone, or as a double digit number.
+
+Then the remaining can be counted in f(i - 1) and f(i - 2) ways. Check the conditions and accordingly add. 
+
+if(s[i] > 0)
+	f(i) = f(i - 1)
+if(s[i - 1] = 1 or (s[i - 1] = 2 and s[i] <= 6))
+	f(i) += f(i - 2)
+
+Handle the base cases of i = 0 and i = 1 differently.
+
+-------------------------------------------------------------------
+
+class Solution 
+{
+    public:
+    
+    int numDecodings(string s) 
+    {
+        vector <int> no_of_decodings(s.size(), 0);
+        
+        for(int i = 0; i < s.size(); i++)
+        {
+            if(i == 0)
+            {
+                no_of_decodings[i] = (s[i] > '0' ? 1 : 0);
+            }
+            else
+            {
+                no_of_decodings[i] = (s[i] > '0' ? no_of_decodings[i - 1] : 0);
+                
+                if(s[i - 1] == '1' || (s[i - 1] == '2' && s[i] <= '6'))
+                {
+                    if(i == 1)
+                        no_of_decodings[i]++;
+                    else
+                        no_of_decodings[i] += no_of_decodings[i - 2];
+                }
+            }
+        }
+        
+        if(s.size() == 0)
+            return 0;
+        
+        return no_of_decodings[s.size() - 1];
+    }
+};
