@@ -1,0 +1,89 @@
+
+This is the first time I've ever used binary search in such a creative way.
+
+Ask yourself the following question, is it possible to ensure each distance is at most x with at most K new stations ?
+
+Go through all stations, 
+
+	if S[i] - S[i - 1] <= x, then let it be. 
+
+	if S[i] - S[i - 1] > x, then greedily add stations at interval x so that all intervals are at most x. 
+
+	S[i] + x, S[i] + 2x, S[i] + 3x, .... S[i + 1]
+
+The number of new stations added is given ceil( (S[i + 1] - S[i])/x) - 1 
+
+-1 ensures that we don't have to seperately handle the case when S[i + 1] - S[i] is a multiple of x, since we will not be adding a station at S[i + 1]
+
+Count the number of stations added. If it is > K, then it is not possible. Else, it is.
+
+Now, we can do it for one x, but how do we know which x to try ? 
+
+Binary search !
+
+low = 0, high = station[last] - station[0]
+
+Now the range is 1e8 and at most 1e-6 error, so it's like binary search upto 1e14, so less than 60 O(n) scans. 
+
+Each such question takes a linear scan to answer. We ask about 50-60 such questions.
+
+if(is_possible(x) && !is_possible(x - epsilon)), then x is the answer.
+
+Else if x is the answer and (x - epsilon) is also the answer, then it means x is too high, make right = x
+
+If x is not possible, then left = x
+
+
+---------------------------------------------------------------------
+
+class Solution
+{
+    public:
+
+    int is_possible(vector <int> &stations, int k, double x)
+    {
+        int new_stations = 0;
+
+        for(int i = 1; i < stations.size(); i++)
+        {
+            if(stations[i] - stations[i - 1] >= x)
+            {
+                new_stations += ceil((stations[i] - stations[i - 1])/x) - 1;
+            }
+        }
+
+        return (new_stations <= k);
+    }
+
+    double minmaxGasDist(vector<int>& stations, int K)
+    {
+        double left = 0, right = stations.back() - stations[0];
+        double mid = (left + right)/2, epsilon = 1e-6;
+
+        while(left < right)
+        {
+            mid = (left + right)/2;
+
+            if(is_possible(stations, K, mid))
+            {
+                if(!is_possible(stations, K, mid - epsilon))
+                {
+                    break;
+                }
+                else
+                {
+                    right = mid;
+                }
+            }
+            else
+            {
+                left = mid;
+            }
+        }
+
+        return mid;
+    }
+};
+
+
+	
