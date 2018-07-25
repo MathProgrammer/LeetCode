@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+struct TreeNode 
+{
+      int val;
+      TreeNode *left;
+      TreeNode *right;
+      TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ };
+ 
+class Solution 
+{
+    public:
+    
+    void get(TreeNode* current, vector <int> &leaves)
+    {
+        if(current == NULL)
+            return;
+        
+        if(current->right == NULL && current->left == NULL)
+        {
+            leaves.push_back(current->val);
+            return;
+        }
+        
+        get(current->left, leaves);
+        get(current->right, leaves);
+    }
+    
+    bool leafSimilar(TreeNode* root1, TreeNode* root2) 
+    {
+        vector <int> leaves_1;
+        get(root1, leaves_1);
+        
+        vector <int> leaves_2;
+        get(root2, leaves_2);
+        
+        int leaf_identical = (leaves_1.size() != leaves_2.size() ? false : true);
+        for(int i = 0; i < leaves_1.size(); i++)
+            if(leaves_1[i] != leaves_2[i])
+                leaf_identical = false;
+        
+        return leaf_identical;
+    }
+};
