@@ -1,0 +1,72 @@
+Now any fibonacci sequence is uniquely determined by it's first two terms, or even it's last two terms. 
+
+Let f(i, j) be the maximum sequence length ending at A[i] and A[j]. 
+
+Then if A[k] + A[j] = A[i], 
+
+f(i, j) = 1 + f(j, k) 
+
+-----------------------------------
+
+
+That's the recurrence we want. I initially tried to do it with only one variable but that's not sufficient information. 
+
+There are multiple sequences that end at index i. 
+
+For example, consider, 
+
+2 3 5 6 11
+
+If we only keep track of f(i), 
+
+then f(1) = 1, f(2) = 1, f(3) = 3, f(4) = 1, f(5) = 5 !
+
+But, that's wrong. 
+
+What this algorithm would think is that 11 can be put after 5 and 6
+
+And f(3) = 3, because 5 can be put after 2 3
+
+But 2 3 5 6 11 is not a Fibonacci sequence !
+
+----------------------------------------------------
+
+This problem never happens when we use two variables instead of one, because it uniquely determines the sequence
+
+class Solution
+{
+public:
+
+    int lenLongestFibSubseq(vector<int>& A)
+    {
+        map <int, int> index;
+        for(int i = 0; i < A.size(); i++)
+            index[A[i]] = i;
+
+        int n = A.size();
+        typedef vector <int> v_int;
+        vector <v_int> max_sequence_ending_at(n + 1, v_int(n + 1, 0));
+
+        int answer = 0;
+
+        for(int i = 0; i < A.size(); i++)
+        {
+            for(int j = 0; j < i; j++)
+            {
+                int third_last = A[i] - A[j];
+
+                if(third_last < A[j] && index.find(third_last) != index.end())
+                    max_sequence_ending_at[i][j] = 1 + max_sequence_ending_at[j][index[third_last]];
+                else
+                    max_sequence_ending_at[i][j] = 2;
+
+                answer = max(answer, max_sequence_ending_at[i][j]);
+            }
+        }
+
+        if(answer <= 2)
+            answer = 0;
+
+        return answer;
+    }
+};
