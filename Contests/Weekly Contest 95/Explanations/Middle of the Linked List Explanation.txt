@@ -1,0 +1,24 @@
+Here, we can use Floyd's two pointer or - tortoise and rabbit algorithm ! It seems like magic !
+
+One pointer takes two steps, the other takes one. So when the pointer which takes two steps reaches the end, the tortoise must be at the middle !
+
+----------------------------------------
+
+class Solution
+{
+    public:
+
+    ListNode* middleNode(ListNode* head)
+    {
+        ListNode* tortoise = head, *rabbit = head;
+
+        while(rabbit != NULL && rabbit->next != NULL)
+        {
+            tortoise = tortoise->next;
+            rabbit = (rabbit->next)->next;
+        }
+
+        return tortoise;
+    }
+};
+
