@@ -1,0 +1,60 @@
+Let f(x) denote the number of multiples of A or B upto x. 
+
+Then f(x) <= f(x + 1)
+
+This means that we can apply binary search !
+
+We need to look for a number x, such that f(x) = N and f(x - 1) < N
+
+How do we do this ?
+
+If f(x) > N, then the x we want is smaller than the current x
+
+If f(x) < N, then the x we want is larger than the current x 
+
+What is the largest value of x that we can get ?
+
+x is at most N*min(A, B) = 10^9 x 10^4 = 10^{14}
+
+We can keep cutting the search space in half each time. 
+
+---------------------------------------------------------------
+
+while(left <= right)
+        {
+            long long mid = (left + right) >> 1;
+
+            if(no_of_multiples(mid, A, B) >= N)
+            {
+                if(mid == left || no_of_multiples(mid - 1, A, B) < N)
+                {
+                    long long answer = mid%MOD;
+
+                    return answer;
+                }
+                else
+                {
+                    right = mid - 1;
+                }
+            }
+            else
+            {
+                left = mid + 1;
+            }
+        }
+
+--------------------------------------------------------
+
+How do we find out the number of multiples of A or B below N ? 
+
+By using the principle of inclusion and exclusion. 
+
+
+    int no_of_multiples(long long N, int A, int B)
+    {
+        long long lcm = (A*1LL*B)/gcd(A, B);
+
+        return (N/A + N/B - N/lcm);
+    }
+
+Keep in mind to divide by lcm and not by AB. If A and B are not coprime, we need to divide by the lcm. 
