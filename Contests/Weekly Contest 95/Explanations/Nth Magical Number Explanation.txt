@@ -1,0 +1,54 @@
+Notice that the multiples of A and B are cyclic about the LCM = L. 
+
+(If m is a multiple of A or B, then m + L is also a multiple of A or B.)
+
+If there are x multiples of A and B in [1, L]
+
+There are x multiples of A and B in [L, 2L]
+
+And x multiples in [2L, 3L] too. 
+
+------------------------------------------------
+
+Using the division algorithm, 
+
+Let us write N = qx + r, where 0 <= r < x. 
+
+It is sufficient for us to find the r-th multiple of A or B. 
+
+After that, we simply add the LCM q times. 
+
+--------------------------------------
+
+Here is how we find r - 
+
+From 1 to r, we check the smallest multiple of A and B we haven't visited yet. 
+
+long long answer = 0;
+
+        for(int last_a = 1, last_b = 1, i = 1; i <= N%no_of_lcm_multiples; i++)
+        {
+            if(A*last_a < B*last_b)
+            {
+                answer = (A*last_a)%MOD;
+                last_a++;
+            }
+            else
+            {
+                answer = (B*last_b)%MOD;
+                last_b++;
+            }
+        }
+
+----------------------------------
+
+Here is how we find q - 
+
+long long no_of_lcms = (lcm*(N/no_of_lcm_multiples))%MOD;
+      
+-------------------------------------
+
+And so the N-th multiple is given by - 
+
+answer = (no_of_lcms + answer)%MOD
+
