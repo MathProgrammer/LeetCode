@@ -1,0 +1,30 @@
+The first player always wins !
+
+
+Let us look at all the piles of odd indices - 1, 3, 5, 7, 9, etc
+
+And all the piles at even indices - 2, 4, 6, 8, 10, 12, etc
+
+Now, there are an equal number of odd index and even index piles !
+
+----------------------------------
+
+One of these has to be greater !
+
+Let us say that the odd index piles have a greater sum ... Then pick pile 1 in your first move. If your opponent takes pile 2, then take pile 3. If your opponent takes pile N, take pile N - 1. 
+
+Notice that for each of the first player's move, the first player will have two choices - Either take an odd index pile or an even indexed pile. 
+
+So if the odd index piles have a greater sum, choose the odd indexed pile at ever step. (And vice versa if the even index piles have a greater sum !)
+
+----------------------------------
+
+class Solution
+{
+    public:
+
+    bool stoneGame(vector<int>& piles)
+    {
+        return true;
+    }
+};
