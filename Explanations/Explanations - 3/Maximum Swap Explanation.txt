@@ -1,0 +1,66 @@
+We need to swap the first digit from the left that can be replaced with a larger digit from the right. 
+
+How do we do this in O(n) rather than O(n^2) ? (Where n is the number of digit, not the number itself)
+
+Let p(i) denote the position of the largest digit from [i, i + 1, ... N]
+
+We will scan the digits from left to right. If we get a digit which is smaller than p(i + 1), 
+
+We will swap N[i], with p(i + 1). 
+
+------------------
+
+#define all(v) (v).begin(), (v).end()
+
+class Solution 
+{
+    public:
+    
+    int maximumSwap(int num) 
+    {
+        vector <int> N;
+        
+        while(num > 0)
+        {
+            N.push_back(num%10);
+            num /= 10;
+        }
+        
+        reverse(all(N));
+        
+        vector <int> max_digit_position_from(N.size() + 1);
+        for(int i = N.size() - 1; i >= 0; i--)
+        {
+            if(i == N.size() - 1)
+            {
+                max_digit_position_from[i] = i;
+            }
+            else 
+            {
+                int current_max_position = max_digit_position_from[i + 1];
+                
+                if(N[i] > N[current_max_position])
+                    current_max_position = i;
+                
+                max_digit_position_from[i] = current_max_position;
+            }
+        }
+        
+        for(int i = 0; i < N.size() - 1; i++)
+        {
+            int current_max_position = max_digit_position_from[i + 1];
+            
+            if(N[i] < N[current_max_position])
+            {
+                swap(N[i], N[current_max_position]);
+                break;
+            }
+        }
+        
+        int answer = 0;
+        for(int i = 0; i < N.size(); i++)
+            answer = answer*10 + N[i];
+        
+        return answer;
+    }
+};
