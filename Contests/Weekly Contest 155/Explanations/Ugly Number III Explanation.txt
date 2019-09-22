@@ -1,0 +1,33 @@
+https://qr.ae/TWK0mG
+
+The main idea is to binary search over f, where f(i) is the number of multiples of a, b or c till i. 
+
+Let f(R) always be >= n and let f(L) always be < n
+
+When (R - L) = 1, then R is the answer
+
+------
+
+int nthUglyNumber(int n, LL a, LL b, LL c)
+ {
+ 	const LL oo = 1e18;
+ 	LL left = 0, right = oo; //Left always has less multiples than n, Right always has >= multiples than n
+ 
+	while(right - left > 1) //When right - left = 1, then right is the answer
+ 	{	
+ 		LL mid = (left + right)/2;
+ 
+		LL multiples_till_mid = calculate(mid, a, b, c);
+ 
+		if(multiples_till_mid >= n)
+ 		{
+ 			right = mid;
+ 		}
+ 		else if(multiples_till_mid < n)
+		{
+ 			left = mid;
+ 		}
+ 	}
+ 	
+	return right;
+ }
