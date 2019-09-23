@@ -1,0 +1,79 @@
+Firstly, we will create a graph. 
+
+Then, we will look at each connected component seperately. 
+
+----
+
+Fact - Given a connected component, we can put the characters in any order inside this component
+
+Proof - We can prove this by induction. 
+
+If there are only 1 or 2 vertices, it is trivially true. 
+
+Let us suppose that it is true for a k-vertex component.
+
+Then, let us add another vertex to this component. Let there be (k + 1) vertices. 
+
+We will place any one vertex in it's desired position and then delete it from the component. Then, it becomes a k-vertex component for which we have already proved the fact.
+
+-----
+
+1. Find the connected components of this graph. We can do this using a Depth-First Search
+
+int no_of_components = 0;
+component.resize(S.size(), 0);
+
+for(int i = 0; i < S.size(); i++)
+{
+    if(component[i] == 0)
+    {
+        no_of_components++;
+
+        dfs(i, no_of_components);
+    }
+}
+
+
+-----
+
+2. Put all the characters in the same component in the same vector
+
+vector <vector <char> > component_chars(no_of_components + 1);
+for(int i = 0; i < S.size(); i++)
+{
+    component_chars[component[i]].push_back(S[i]);
+}
+
+----
+
+
+3. Sort the characters in each connected component
+
+for(int i = 1; i <= no_of_components; i++)
+{
+    sort(all(component_chars[i]));
+}
+
+
+-----
+
+4. Reconstruct the original string
+
+Maintain a pointer to each of the components. 
+While visiting, the i-th character, check which component it belongs to. 
+If it belongs to component C and is in the p-th position of the component C, place the p-th smallest character in that position. 
+Increment the pointer to component C after placing the correct character in the i-th position
+
+vector <int> current_pointer(no_of_components + 1, 0);
+string answer;
+
+for(int i = 0; i < S.size(); i++)
+{
+    int p = current_pointer[component[i]];
+
+    char char_here = component_chars[component[i]][p];
+
+    answer += char_here;
+
+    current_pointer[component[i]]++;
+}
