@@ -1,0 +1,74 @@
+We want to know the number of 0-components such that it is surrounded by 1-s on all sides. 
+
+Our matrix has only 0s and 1s. 
+
+This means, that any 0-component that does not have any element in the border will be surrouneded by 1s on all sides. 
+
+Proof - If a 0-component does not extend till the border in any direction, then it means it has an end. 
+
+Wherever it ends, there has to be some other character after the last 0. 
+
+Since there are only 2 characters, the other character will be a 1. 
+
+----
+
+We will perform a DFS with a flag = No Borders. 
+
+Whenever, we hit a border, we will set this flag to true. 
+
+We will do DFS on the grid and count the number of 0-components for which this flag is true, which means that this component does not touch the border. 
+
+----
+
+
+class Solution
+{
+    public:
+
+    void dfs(int i, int j, vector <vector <int> >&grid, vector <vector <int> >&visited, int &no_borders)
+    {
+        if(grid[i][j] == 1 || visited[i][j])
+        {
+            return;
+        }
+
+        if(i == 0 || i == grid.size() - 1 || j == 0 || j == grid[0].size() - 1)
+        {
+            no_borders = false;
+            return;
+        }
+
+        visited[i][j] = true;
+
+        const int NO_OF_NEIGHBOURS = 4;
+        int next_i[NO_OF_NEIGHBOURS] = {-1, 0, 0, 1}, next_j[NO_OF_NEIGHBOURS] = {0, 1, -1, 0};
+        for(int n = 0; n < NO_OF_NEIGHBOURS; n++)
+        {
+            dfs(i + next_i[n], j + next_j[n], grid, visited, no_borders);
+        }
+    }
+
+    int closedIsland(vector< vector<int> >& grid)
+    {
+        int rows = grid.size(), columns = grid[0].size();
+
+        int good_components = 0;
+        vector <vector <int> > visited(rows, vector <int> (columns, false));
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < columns; j++)
+            {
+                int no_borders = true;
+                if(grid[i][j] == 0 && !visited[i][j])
+
+                {
+                    dfs(i, j, grid, visited, no_borders);
+
+                    good_components += (no_borders == true);
+                }
+            }
+        }
+
+        return good_components;
+    }
+};
