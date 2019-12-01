@@ -1,0 +1,54 @@
+Let us find the maximum size of square ending at (i, j) for each of the cells of the square. 
+
+If M(i, j) = 0, then it is 0. 
+
+Otherwise if M(i, j) = 1, 
+
+Let f(i, j) represent the size of the maximum square ending at (i, j) 
+
+f(i, j) = min{f(i - 1, j), f(i - 1, j - 1), f(i, j - 1)} + 1
+
+-----
+
+If the maximum size of the square ending at (i, j) is X, then it means that there are X squares here. 
+
+A square of size 1
+A square of size 2
+.
+.
+.
+A square of size X
+
+We need to sum over f(i, j) for all cells of the matrix. 
+
+-----
+
+int countSquares(vector< vector<int> >& matrix)
+    {
+        int rows = matrix.size(), columns = matrix[0].size();
+
+        int squares = 0;
+
+        vector <vector <int> > max_order_at(rows + 1, vector <int> (columns + 1, 0));
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < columns; j++)
+            {
+                if(matrix[i][j] == 0)
+                {
+                    continue;
+                }
+
+                max_order_at[i][j] = 1;
+
+                if(i > 0 && j > 0)
+                {
+                    max_order_at[i][j] = min_3(max_order_at[i - 1][j], max_order_at[i - 1][j - 1], max_order_at[i][j - 1]) + 1;
+                }
+
+                squares += max_order_at[i][j];
+            }
+        }
+
+        return squares;
+    }

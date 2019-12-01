@@ -1,0 +1,44 @@
+We will be greedy. 
+
+We will first check that T is in [2C, 4C]. Otherwise it is not possible. 
+
+Now, as long as T > 2c, we will make jumbo burgers. 
+
+When T = 2C, we will make small burgers. 
+
+----
+
+class Solution
+{
+    public:
+
+    vector<int> numOfBurgers(int tomatoSlices, int cheeseSlices)
+    {
+        vector <int> answer;
+
+        if(tomatoSlices < 2*cheeseSlices || tomatoSlices > 4*cheeseSlices)
+        {
+            return answer;
+        }
+
+        int jumbo = 0;
+        while(tomatoSlices > 2*cheeseSlices)
+        {
+            jumbo++;
+            tomatoSlices -= 4;
+            cheeseSlices--;
+        }
+
+        if(tomatoSlices != 2*cheeseSlices)
+        {
+            return answer;
+        }
+
+        int small = cheeseSlices;
+
+        answer.push_back(jumbo);
+        answer.push_back(small);
+
+        return answer;
+    }
+};
