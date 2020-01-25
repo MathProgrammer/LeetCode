@@ -1,0 +1,34 @@
+1. If the string is all A's, then we will make the last character B.
+
+2. Otherwise, we will choose the leftmost character which is not A and make it A.
+
+3. We have to ensure we don't change the central character as that keeps the string a palindrome.
+
+-----
+
+class Solution
+{
+    string breakPalindrome(string palindrome)
+    {
+        if(palindrome.size() == 1)
+        {
+            string empty;
+            return empty;
+        }
+
+        int n = palindrome.size();
+
+        for(int i = 0; i < palindrome.size(); i++)
+        {
+            if(palindrome[i] != 'a' && !(palindrome.size()%2 == 1 && i == palindrome.size()/2))
+            {
+                palindrome[i] = 'a';
+                return palindrome;
+            }
+        }
+
+        palindrome[palindrome.size() - 1] = 'b';
+
+        return palindrome;
+    }
+};
