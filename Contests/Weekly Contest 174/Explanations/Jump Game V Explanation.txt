@@ -1,0 +1,96 @@
+Let us draw a graph corresponding to this problem. 
+
+We will represent the blocks by vertices and draw an edge between i and j
+
+if it is possible to go from A[i] to A[j] in on move. 
+
+-----
+
+The question is now - 
+
+Given a directed graph, find the length of the longest path.
+
+-----
+
+This problem can be solved using Depth First Search. 
+
+Suppose a vertex V has children C1, C2, C3 
+
+Let f(v) represent the length of the largest path starting from vertex v.
+
+f(V) = 1 + max{f(C1), f(C2), f(C3)}
+
+-----
+
+class Solution
+{
+
+    public:
+    
+    vector <vector <int> > graph;
+    vector <int> max_from;
+    
+    void dfs(int v)
+    {
+        if(max_from[v] != 0)
+        {
+            return;
+        }
+        
+        max_from[v] = 1;
+        
+        for(int i = 0; i < graph[v].size(); i++)
+        {
+            int child_v = graph[v][i];
+            
+            dfs(child_v);
+            
+            max_from[v] = max(max_from[v], 1 + max_from[child_v]);
+        }
+    }
+    
+    int maxJumps(vector<int>& A, int d)
+    {
+        graph.resize(A.size() + 1);
+        
+        for(int i = 0; i < A.size(); i++)
+        {
+            for(int j = 1; j <= d && i + j < A.size(); j++)
+            {
+                if(A[i] <= A[i + j])
+                {
+                    break;
+                }
+                
+                graph[i].push_back(i + j);
+            }
+            
+            for(int j = 1; j <= d && i - j >= 0; j++)
+            {
+                if(A[i] <= A[i - j])
+                {
+                    break;
+                }
+                
+                graph[i].push_back(i - j);
+            }
+        }
+        
+        max_from.resize(A.size() + 1);
+        for(int i = 0; i < A.size(); i++)
+        {
+            if(max_from[i] == 0)
+            {
+                dfs(i);
+            }
+        }
+        
+        int answer = 0;
+        for(int i = 0; i < A.size(); i++)
+        {
+            answer = max(answer, max_from[i]);
+        }
+        
+        return answer;
+    }
+};
