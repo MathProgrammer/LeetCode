@@ -1,0 +1,41 @@
+1. We will keep track of the frequency of each A[i]
+
+2. We will sort the pairs (A[i], f(A[i]))
+
+3. We will choose the A[i] for which frequency is the largest first and stop when we have taken half the array.
+
+-----
+
+class Solution
+{
+    public:
+    int minSetSize(vector<int>& arr)
+    {
+        map <int, int> frequency;
+        for(int i = 0; i < arr.size(); i++)
+        {
+            frequency[arr[i]]++;
+        }
+
+        set <pair <int, int> > S;
+        for(auto it = frequency.begin(); it != frequency.end(); it++)
+        {
+            S.insert(make_pair(it->second, it->first));
+        }
+
+        int taken_frequency = 0, taken_elements = 0;
+        for(auto it = S.rbegin(); it != S.rend(); it++)
+        {
+            taken_frequency += (*it).first;
+
+            taken_elements++;
+
+            if(taken_frequency >= arr.size()/2)
+            {
+                return taken_elements;
+            }
+        }
+
+        return 0;
+    }
+};

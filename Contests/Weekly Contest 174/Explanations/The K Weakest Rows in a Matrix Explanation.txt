@@ -1,0 +1,36 @@
+1. Find out the strength of each row
+
+2. Make a set of pairs (strength, index)
+
+3. Sort by strength and return the K smallest indices
+
+------
+
+class Solution
+{
+    public:
+    vector<int> kWeakestRows(vector<vector<int>>& mat, int k)
+    {
+        vector <pair <int, int> > strengths;
+        for(int i = 0; i < mat.size(); i++)
+        {
+            int strength = 0;
+            for(int j = 0; j < mat[i].size(); j++)
+            {
+                strength += (mat[i][j] == 1);
+            }
+
+            strengths.push_back(make_pair(strength, i));
+        }
+
+        sort(strengths.begin(), strengths.end());
+
+        vector <int> answer;
+        for(int i = 0; i < k; i++)
+        {
+            answer.push_back(strengths[i].second);
+        }
+
+        return answer;
+    }
+};
