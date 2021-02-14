@@ -1,14 +1,12 @@
-const int MAX_N = 405;
-int M[MAX_N][MAX_N];
-
 class Solution 
 {
     public:
     
     int minTrioDegree(int n, vector<vector<int>>& edges) 
     {
+        vector <vector <int> > M(n + 1, vector <int> (n + 1, 0));
         vector <int> degree(n + 1, 0);
-        memset(M, 0, sizeof(M));
+        
         for(int i = 0; i < edges.size(); i++)
         {
             int u = edges[i][0], v = edges[i][1];
@@ -20,17 +18,17 @@ class Solution
         }
         
         const int oo = 1e9;
-        int minimum_degree =oo;
+        int minimum_degree = oo;
         for(int i = 1; i <= n; i++)
         {
-            for(int j = 1; j <= n; j++)
+            for(int j = 1 + 1; j <= n; j++)
             {
                 if(M[i][j] == 0)
                 {
                     continue;
                 }
                 
-                for(int k = 1; k <= n; k++)
+                for(int k = j + 1; k <= n; k++)
                 {
                     if(M[i][j] && M[j][k] && M[k][i])
                     {
