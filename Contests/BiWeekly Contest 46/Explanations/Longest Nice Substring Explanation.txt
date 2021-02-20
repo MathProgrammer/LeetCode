@@ -1,0 +1,57 @@
+- Let us go through the characters of $S$.
+    - If $S[i]$ exists in both the capital and small form, then go ahead.
+    - If $S[i]$ exists in only one form, then it's clear $S[i]$ is not a part of the nice substring. 
+      The nice substring is either $S[1, i - 1]$ or $S[i + 1, n]$ and we will check both.
+      
+- If we cannot divide $S$, then it means that every character of $S$ is present in both it's capital and small form and
+$S$ is a nice substring so we can return the entire string.
+
+-----
+
+class Solution 
+{
+    public:
+    
+    string longestNiceSubstring(string s) 
+    {    
+        string answer;
+        
+        set <char> distinct;
+        
+        for(int i = 0; i < s.size(); i++)
+        {
+            distinct.insert(s[i]);
+        }
+        
+        for(int i = 0; i < s.size(); i++)
+        {
+            if('a' <= s[i] && s[i] <= 'z')
+            {
+                if(distinct.find(s[i] + 'A' - 'a') != distinct.end())
+                {
+                    continue;
+                }
+            }
+            
+            if('A' <= s[i] && s[i] <= 'Z')
+            {
+                if(distinct.find(s[i] + 'a' - 'A') != distinct.end())
+                {
+                    continue;
+                }
+            }
+            
+            string left_answer = longestNiceSubstring(s.substr(0, i)); 
+            string right_answer = longestNiceSubstring(s.substr(i + 1, s.size() - (i + 1)));
+            
+            if(left_answer.size() < right_answer.size())
+            {
+                return right_answer;
+            }
+            
+            return left_answer;
+        } 
+        
+        return s;
+    }
+};
