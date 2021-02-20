@@ -3,12 +3,7 @@ class Solution
     public:
     
     string longestNiceSubstring(string s) 
-    {
-        if(s.size() == 1)
-        {
-            return "";
-        }
-        
+    {    
         string answer;
         
         set <char> distinct;
