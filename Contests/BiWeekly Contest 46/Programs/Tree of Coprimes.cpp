@@ -2,7 +2,7 @@ class Solution
 {
     public:
     
-    void dfs(vector <vector <int> > &tree, vector <int> &H, vector <int> &A, vector <int> &answer, vector < stack <pair <int, int> > > &index, int v, int parent_v)
+    void dfs(vector <vector <int> > &tree, vector <int> &H, vector <int> &A, vector <int> &answer, vector < vector <int> > &index, int v, int parent_v)
     {
         const int MAX_N = 55;
         int ancestor_distance = 0;
@@ -13,17 +13,17 @@ class Solution
                 continue;
             }
             
-            pair <int, int> current = index[i].top();
+            int u = index[i].back();
             
-            if(current.second > ancestor_distance)
+            if(H[u] > ancestor_distance)
             {
-                ancestor_distance = current.second;
+                ancestor_distance = H[u];
                 
-                answer[v] = current.first;
+                answer[v] = u;
             }
         }
         
-        index[A[v]].push(make_pair(v, H[v]));
+        index[A[v]].push_back(v);
         
         for(int child_v : tree[v])
         {
@@ -37,7 +37,7 @@ class Solution
             dfs(tree, H, A, answer, index, child_v, v);
         }
         
-        index[A[v]].pop();
+        index[A[v]].pop_back();
     }
     
     vector<int> getCoprimes(vector<int>& nums, vector<vector<int>>& edges) 
@@ -56,7 +56,7 @@ class Solution
         height[0] = 1;
     
         const int MAX_VALUE = 55;
-        vector < stack <pair <int, int> > > index(MAX_VALUE);
+        vector < vector <int> > index(MAX_VALUE);
         
         vector <int> answer(n, -1);
         
