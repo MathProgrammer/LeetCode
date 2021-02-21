@@ -1,0 +1,57 @@
+Let f(L, R, i) be the answer when M[i] is multiplied with either A[L] or A[R]. 
+The transition is simple. f(L, R, i) is the maximum of these two options. 
+* M[i]A[L] + f(L + 1, R, i + 1)
+* M[i]A[R] + f(L, R - 1, i + 1) 
+
+If we are at position L and are currently processing multiplier i, then we must have used i operations. These i operations are distributed among the prefix and suffix. 
+If we are at position L, then we have used L elements in the prefix and the remaining (i - L) operations must have been done in the suffix.  
+R points to the first unused element in the suffix.  We have used (i - L) elements in the suffix so R points to (n - 1) - (i - L). 
+This helps us determine the value of R.  
+
+I have seen this idea of converting a 3 dimensional DP into a 2 dimensional DP by noticing two of the dimensions are connected in this problem 
+[here](https://codeforces.com/contest/932/problem/E) on CodeForces Although, it is much harder.
+
+-----
+
+class Solution 
+{
+    public:
+    int maximumScore(vector<int>& A, vector<int>& multipliers) 
+    {
+        int n = A.size();
+        int m = multipliers.size();
+        
+        vector <vector <int> > answer(m + 1, vector <int> (m + 1, 0));
+        
+        for(int current_multiplier = m - 1; current_multiplier >= 0; current_multiplier--)
+        {
+            int operations_used = current_multiplier;
+            
+            for(int left = 0; left <= operations_used; left++)
+            {   
+                int right = (n - 1) - (operations_used - left); 
+                
+                if(right < left)
+                {
+                    continue;
+                }
+                
+                int choosing_left, choosing_right;
+                if(current_multiplier == m - 1)
+                {
+                    choosing_left = multipliers[current_multiplier]*A[left];
+                    choosing_right = multipliers[current_multiplier]*A[right];
+                }
+                else 
+                {
+                    choosing_left = multipliers[current_multiplier]*A[left] + answer[left + 1][current_multiplier + 1];
+                    choosing_right = multipliers[current_multiplier]*A[right] + answer[left][current_multiplier + 1];
+                }
+                
+                answer[left][current_multiplier] = max(choosing_left, choosing_right);
+            }
+        }
+        
+        return answer[0][0];
+    }
+};
