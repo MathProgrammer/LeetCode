@@ -1,0 +1,3 @@
+1. Make a vector of pairs (word number, string) 
+2. Sort the vector by word numbers 
+3. Concatenate the strings, seperating them with a space 
