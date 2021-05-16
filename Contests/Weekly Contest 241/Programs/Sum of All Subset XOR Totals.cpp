@@ -1,0 +1,31 @@
+class Solution {
+public:
+    
+    int is_set(int n, int bit)
+    {
+        return ( (n & (1 << bit)) != 0 );
+    }
+    
+    int subsetXORSum(vector<int>& nums) 
+    {
+        int max_mask = (1 << nums.size());
+        
+        int sum = 0;
+        for(int m = 0; m < max_mask; m++)
+        {
+            int current_xor = 0; 
+            
+            for(int bit = 0; bit < nums.size(); bit++)
+            {
+                if(is_set(m, bit))
+                {
+                    current_xor ^= nums[bit];
+                }
+            }
+            
+            sum += current_xor;
+        }
+        
+        return sum;
+    }
+};
