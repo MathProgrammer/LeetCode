@@ -1,0 +1,82 @@
+Let f(m, i) represent the smallest sum of the first i elements where we have considered 
+only those elements in B who's index is set in the binary representation of m. 
+
+f(10001001, 3) represents the minimum sum of the first 3 elments where we have used 
+only elements {1, 4, 8} in B
+
+A[3] can be related to one of B[1], B[4], B[8]
+
+f(10001001, 3) is the minimum of these 3 values 
+
+1. f(10001000, 2) + XOR(A[3], B[1]) 
+2. f(10000001, 2) + XOR(A[3], B[4])
+3. f(00001001, 2) + XOR(A[3], B[8])
+
+-----
+
+The answer is f(11111111, 8)
+
+We will iterate over all possible masks and pair A[i] with each of the set bits and add it to f( XOR(m, paired_bit), i - 1) 
+
+-----
+
+class Solution {
+public:
+    
+    int is_bit_set(int n, int bit)
+    {
+        return ( (n & (1 << bit)) != 0 );
+    }
+    
+    int bit_count(int n)
+    {
+        int count = 0;
+        while(n)
+        {
+            count += n%2;
+            
+            n /= 2;
+        }
+        
+        return count;
+    }
+    
+    int minimumXORSum(vector<int>& A, vector<int>& B) {
+        
+        int n = A.size();
+        const int max_mask = (1 << n), oo = 1e9;
+        
+        vector < vector <int> > min_cost(max_mask, vector <int> (n, oo) );
+        for(int i = 0; i < n; i++)
+        {
+            for(int m = 0; m < max_mask; m++)
+            {
+                if(bit_count(m) != i + 1)
+                {
+                    continue;
+                }
+                
+                for(int last = 0; last < n; last++)
+                {
+                    if(!is_bit_set(m, last))
+                    {
+                        continue;
+                    }
+                    
+                    int remaining_m = m^(1 << last);
+                    
+                    if(i == 0)
+                    {
+                        min_cost[m][i] = min(min_cost[m][i], A[i]^B[last]);
+                        
+                        continue;
+                    }
+                    
+                    min_cost[m][i] = min(min_cost[m][i], min_cost[remaining_m][i - 1] + (A[i]^B[last]));
+                }
+            }
+        }
+        
+        return min_cost[max_mask - 1][n - 1];
+    }
+};
