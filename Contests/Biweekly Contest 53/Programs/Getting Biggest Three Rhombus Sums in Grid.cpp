@@ -1,0 +1,69 @@
+class Solution {
+public:
+    
+    int is_inside(int r, int c, int rows, int columns)
+    {
+        return (0 <= r && r < rows && 0 <= c && c < columns);
+    }
+    
+    vector<int> getBiggestThree(vector<vector<int>>& grid) 
+    {
+        set <int> sums;
+        
+        int rows = grid.size(), columns = grid[0].size();
+        
+        vector <vector <int> > diagonal_sum(rows + 1, vector <int> (columns + 1));
+        vector <vector <int> > anti_diagonal_sum(rows + 1, vector <int> (columns + 1));
+        for(int c = 0; c < columns; c++)
+        {
+            for(int r = 0; r < rows; r++)
+            {
+                diagonal_sum[r][c] = grid[r][c] + (c == 0 || r == rows - 1 ? 0 : diagonal_sum[r + 1][c - 1]);
+                
+                anti_diagonal_sum[r][c] = grid[r][c] + (r == 0 || c == 0 ? 0 : anti_diagonal_sum[r - 1][c - 1]);
+            }
+        }
+        
+        for(int r = 0; r < rows; r++)
+        {
+            for(int c = 0; c < columns; c++)
+            {
+                sums.insert(grid[r][c]);
+                
+                for(int length = 1; length <= max(rows, columns); length++)
+                {
+                    int top_r = r - length, top_c = c + length; 
+                    int down_r = r + length, down_c = c + length; 
+                    int side_r = r, side_c = c + 2*length;
+                    
+                    if(!is_inside(top_r, top_c, rows, columns) || !is_inside(down_r, down_c, rows, columns) || 
+                       !is_inside(side_r, side_c, rows, columns))
+                    {
+                        continue;
+                    }
+                    
+                    int side_1 = diagonal_sum[top_r][top_c] - diagonal_sum[r][c];
+                    int side_2 = anti_diagonal_sum[side_r][side_c] - anti_diagonal_sum[top_r][top_c];
+                    
+                    int side_3 = diagonal_sum[side_r][side_c] - diagonal_sum[down_r][down_c];
+                    side_3 -= grid[side_r][side_c]; //Counted in side_2 and in side_3
+                    
+                    int side_4 = anti_diagonal_sum[down_r][down_c] - anti_diagonal_sum[r][c];
+                    side_4 += grid[r][c]; //Missed out in both side_1 and side_4 so adding it here
+                    
+                    int rhombus_sum = side_1 + side_2 + side_3 + side_4;
+                    
+                    sums.insert(rhombus_sum);
+                }
+            }
+        }
+        
+        vector <int> answer;
+        for(set <int> :: reverse_iterator it = sums.rbegin(); it != sums.rend() && answer.size() < 3; it++)
+        {
+            answer.push_back(*it);
+        }
+        
+        return answer;
+    }
+};
