@@ -1,0 +1,111 @@
+Maintain two priority queues 
+
+1. For the free servers - Ordered by (Weight, Index) 
+2. For the occupied servers - Ordered by (Time) 
+
+-----
+
+# Maintain Two Priority Queues - Free and Occupied
+
+- The priority queue of free servers is ordered by $(w, i)$
+- The priority queue of occupied servers is ordered by $(t)$
+- At the given second, we will first release all servers who's release time is $\le T$ and push them into the free queue.
+- Then, we will assign the free servers to as many legal tasks as we have at that second.
+- Be careful about the case where we have free servers remaining, but no more tasks. A task is legal if the index of the task is $\ge T$
+    - If there are no free servers remaining, set $T \to O[t]$, where $O[t]$ is the smallest release time of any occupied server.
+    - We don't have to process any second in between because there will not be any free servers in the interim.
+    - If there is at least one free server, increase $T \to T + 1$ and see if we can assign free servers in the next second.
+    
+------
+
+class Solution {
+public:
+    
+    int min(int a, int b)
+    {
+        return (a < b ? a : b);
+    }
+    
+    struct server 
+    {
+        int weight, index, time; 
+        
+        server(int W, int I, int T)
+        {
+            weight = W;
+            index = I;
+            time = T;
+        }
+    };
+    
+    //Implement > operator because we want Minimum Priority queue
+    struct sort_by_weight
+    {
+        bool operator()(server &S1, server &S2)
+        {
+            if(S1.weight == S2.weight)
+            {
+                return (S1.index > S2.index);
+            }
+            
+            return (S1.weight > S2.weight);
+        }
+    };
+    
+    //Implement > operator because we want Minimum Priority queue
+    struct sort_by_time
+    {
+        bool operator()(server &S1, server &S2)
+        {
+            return (S1.time > S2.time);
+        }
+    };
+    
+    vector<int> assignTasks(vector<int>& servers, vector<int>& tasks) 
+    {
+        const int MAX_N = 1e6 + 5;
+        priority_queue <server, vector <server>, sort_by_weight> free;
+        priority_queue <server, vector <server>, sort_by_time> occupied;
+        
+        for(int i = 0; i < servers.size(); i++)
+        {
+            free.push(server(servers[i], i, 0));
+        }
+        
+        vector <int> assigned(tasks.size()); 
+        int current_task = 0;
+        for(int t = 0; current_task < tasks.size() ; )
+        {   
+            while(occupied.size() > 0 && occupied.top().time <= t)
+            {
+                server S = occupied.top(); 
+                occupied.pop();
+                
+                free.push(S);
+            }
+            
+            while(free.size() > 0 && current_task <= min(t, tasks.size() - 1))
+            {
+                server S = free.top(); 
+                free.pop();
+                
+                assigned[current_task] = S.index;
+                S.time = t + tasks[current_task];
+                occupied.push(S);
+                
+                current_task++;
+            }
+            
+            if(free.size() == 0)
+            {
+                t = occupied.top().time; 
+            }
+            else 
+            {
+                t = t + 1;
+            }
+        }
+        
+        return assigned;
+    }
+};
