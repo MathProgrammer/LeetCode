@@ -1,0 +1,60 @@
+Let us find the smallest X such that the time taken while travelling at speed X <= Hour
+
+We can binary search over X
+
+-----
+
+class Solution {
+public:
+    
+    int ceil(int d, int v)
+    {
+        return (d/v) + (d%v != 0);
+    }
+    
+    double check_time(vector <int> &dist, int speed, double hour)
+    {
+        double time = 0;
+        for(int i = 0; i < dist.size(); i++)
+        {
+            if(i + 1 == dist.size())
+            {
+                time += (dist[i]*1.000/speed);
+            }
+            else 
+            {
+                time += ceil(dist[i], speed);
+            }
+        }
+        
+        return time;
+    }
+    
+    int minSpeedOnTime(vector<int>& dist, double hour) 
+    {
+        int left = 0, right = 1e7;
+        
+        if(check_time(dist,right, hour) > hour)
+        {
+            return -1;
+        }
+        
+        while(right - left > 1)
+        {
+            int mid = (left + right)/2;
+            
+            if(check_time(dist, mid, hour) <= hour)
+            {
+                right = mid;
+            }
+            else 
+            {
+                left = mid;
+            }
+        }
+        
+        int answer = right;
+        
+        return answer;
+    }
+};
