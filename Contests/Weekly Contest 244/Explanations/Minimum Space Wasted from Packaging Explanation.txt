@@ -1,0 +1,57 @@
+Let us simulate the process. 
+
+We will sort the packages and the boxes of each supplier. 
+
+We will calculate the total volume required for each supplier and choose the supplier which minimizes this. 
+In order to calculate the total volume the current supplier takes, we will assign each package to the smallest box which can accommodate it.
+This solves the problem.
+
+------
+
+class Solution 
+{
+    public:
+    int minWastedSpace(vector<int>& packages, vector<vector<int>>& boxes) 
+    {
+        
+        const long long oo = 1e18, MOD = 1e9 + 7;
+        sort(packages.begin(), packages.end());
+        
+        long long total_occupied = 0;
+        for(int package_size : packages)
+        {
+            total_occupied += package_size;
+        }
+        
+        long long total_volume = oo;
+        for(vector <int> box : boxes)
+        {
+            sort(box.begin(), box.end());
+            
+            if(packages.back() > box.back())
+            {
+                continue;
+            }
+            
+            long long current_volume = 0;
+            int first_uncovered = 0;
+            for(int b_capacity : box)
+            {
+                int last_box = upper_bound(packages.begin() + first_uncovered, packages.end(), b_capacity) - packages.begin();
+                long long new_coverages = last_box - first_uncovered;
+                
+                current_volume += b_capacity*(new_coverages);
+                first_uncovered += new_coverages; 
+                
+                if(first_uncovered > packages.size())
+                {
+                    break;
+                }
+            }
+            
+            total_volume = min(total_volume, current_volume);
+        }
+        
+        return (total_volume == oo ? -1 : (total_volume - total_occupied)%MOD);
+    }
+};
