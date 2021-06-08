@@ -1,0 +1,56 @@
+Let us precompute P[i][0] as the minimum number of flips to make the first i characters alternating if the first character is 0 
+P[i][1] holds the similar information if the first character is 1
+
+S[i][0], is the number of operations to convert the suffix [i, n] into an alternating string if P[i] = 0 
+S[i][1] holds the same information when P[i] = 1 
+
+------
+
+We can append some prefix of the string into the end. So, the final string will consist of 
+
+[i, n] + [1, i - 1] 
+
+We will determind the first character based on the parity of i. 
+
+We will choose the best possible slicing point.
+
+-----
+
+class Solution 
+{
+    public:
+    int minFlips(string s) 
+    {
+        const int FIRST_ZERO = 0, FIRST_ONE = 1;
+        vector < vector <int> > prefix_flips(s.size(), vector <int> (2, 0));
+        prefix_flips[0][FIRST_ZERO] = (s[0] != '0');
+        prefix_flips[0][FIRST_ONE] = (s[0] != '1');
+        for(int i = 1; i < s.size(); i++)
+        {
+            prefix_flips[i][FIRST_ZERO] = (s[i] != (i)%2 + '0') + prefix_flips[i - 1][FIRST_ZERO];
+            prefix_flips[i][FIRST_ONE] = (s[i] != (i + 1)%2 + '0') + prefix_flips[i - 1][FIRST_ONE];
+        }
+        
+        vector < vector <int> > suffix_flips(s.size(), vector <int> (2, 0));
+        suffix_flips[s.size() - 1][FIRST_ZERO] = (s.back() != '0');
+        suffix_flips[s.size() - 1][FIRST_ONE] = (s.back() != '1');
+        for(int i = s.size() - 2; i >= 0; i--)
+        {
+            suffix_flips[i][FIRST_ZERO] = (s[i] != '0') + suffix_flips[i + 1][FIRST_ONE];
+            suffix_flips[i][FIRST_ONE] = (s[i] != '1') + suffix_flips[i + 1][FIRST_ZERO];
+        }
+        
+        int minimum_flips = min(prefix_flips[s.size() - 1][FIRST_ZERO], prefix_flips[s.size() - 1][FIRST_ONE]);
+        for(int i = 1; i < s.size(); i++)
+        {
+            int choice_zero = suffix_flips[i][FIRST_ZERO] + (i%2 == s.size()%2 ? 
+                                                             prefix_flips[i - 1][FIRST_ZERO] : prefix_flips[i - 1][FIRST_ONE]);
+            int choice_one = suffix_flips[i][FIRST_ONE] + (i%2 == s.size()%2 ? 
+                                                          prefix_flips[i - 1][FIRST_ONE] : prefix_flips[i - 1][FIRST_ZERO]);
+            
+            minimum_flips = min(minimum_flips, min(choice_zero, choice_one));
+        }
+        
+        return minimum_flips;
+    }
+};
