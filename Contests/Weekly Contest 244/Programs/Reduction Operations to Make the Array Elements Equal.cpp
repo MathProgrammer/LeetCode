@@ -1,0 +1,42 @@
+class Solution {
+public:
+    int reductionOperations(vector<int>& nums) {
+        
+        const int MAX_N = 5e4 + 5;
+        vector <int> frequency(MAX_N, 0);
+        
+        for(int i = 0; i < nums.size(); i++)
+        {
+            frequency[nums[i]]++;
+        }
+        
+        int operations = 0;
+        for(int p1 = MAX_N - 1, p2 = MAX_N; p2 > 0; )
+        {
+            while(frequency[p1] == 0)
+            {
+                p1--;
+            }
+            
+            p2 = p1 - 1;
+            while(p2 > 0 && frequency[p2] == 0)
+            {
+                p2--;
+            }
+            
+            if(p2 == 0)
+            {
+                break;
+            }
+            
+            operations += frequency[p1]; 
+            frequency[p2] += frequency[p1];
+            frequency[p1] = 0;
+            
+            
+            p1 = p2;
+        }
+        
+        return operations;
+    }
+};
