@@ -1,0 +1,75 @@
+We will simulate the process and increment the hours (mod 24)
+
+Every hour other than the starting hour and finish hour will have exactly 4 rounds. 
+
+If the start hour or finish hour are not the same, we can count the number of rounds by dividing the remaining time by 15.
+
+If the start hour is the same as the finish hour, we have to compare the start and finish minute. 
+If the finish minute is smaller than the the start minute, we have to keep going forward till we finish 24 hours and come around to it. 
+Otherwise, we will round off the start minute to the nearest multiple of 15, and then count the number of 15 minute multiples 
+
+------
+
+class Solution 
+{
+    public:
+    
+    int get_integer(string S, int l, int r)
+    {
+        return (S[l] - '0')*10 + (S[r] - '0');
+    }
+    
+    int numberOfRounds(string startTime, string finishTime) 
+    {
+        int start_hour = get_integer(startTime, 0, 1), start_minute = get_integer(startTime, 3, 4);
+        int finish_hour = get_integer(finishTime, 0, 1), finish_minute = get_integer(finishTime, 3, 4);
+        cout << "H = " << start_hour << " M = " << start_minute << "\n";
+        
+        int rounds = 0, hour = start_hour, minute = start_minute;
+        while(hour != finish_hour || minute != finish_minute)
+        {
+            if(hour != finish_hour && hour != start_hour)
+            {
+                rounds += 4;
+                
+                hour = (hour + 1)%24;
+                minute = 0;
+                continue;
+            }
+            
+            if(hour == finish_hour && minute == 0)
+            {   
+                rounds += finish_minute/15;
+                minute = finish_minute;
+                continue;
+            }
+            
+            if(hour == start_hour)
+            {   
+                if(hour == finish_hour && start_minute < finish_minute)
+                {  
+                    for(int time = 0; time <= 60; time += 15)
+                    {
+                        if(time >= start_minute)
+                        {
+                            minute = time; 
+                            break;
+                        }
+                    }
+                    //cout << "M = " << minute << "\n";
+                    rounds += (finish_minute - minute)/15;
+                    
+                    minute = finish_minute;
+                }
+                else 
+                {
+                    rounds += (60 - minute)/15;
+                    hour  = (hour + 1)%24;
+                    minute = 0;
+                }
+            }
+        }
+        
+        return rounds;
+    }
+};
