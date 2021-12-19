@@ -1,0 +1,35 @@
+Find the first palindrome in the array 
+
+-----
+
+class Solution {
+public:
+    
+    int is_palindrome(string S)
+    {
+        for(int i = 0, j = S.size() - 1; i < j; i++, j--)
+        {
+            if(S[i] != S[j])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    string firstPalindrome(vector<string>& words) {
+        
+        string answer; 
+        for(string current : words)
+        {
+            if(is_palindrome(current))
+            {
+                answer = current; 
+                break;
+            }
+        }
+        
+        return answer;
+    }
+};
