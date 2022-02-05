@@ -1,0 +1,107 @@
+Let us call the first sequence A and the second sequence B 
+
+We want to minimize (A - B)
+
+In order to do this, we should make A minimum and B maximum 
+
+Let us iterate over all possibilities. 
+The main idea in these kinds of problems is how to iterate over all possibilities ? What should we fix so that we can iterate over all possibilities in the search space ? 
+
+-----
+
+In this case, we can iterate over the last element of A
+
+It is mentioned that the last element of A must come before the first element of B 
+
+So, let all elements of A be in [1, i] and B be in [i + 1, 3n] 
+
+----
+
+Now, we just need a way to find out 
+
+1. Minimum sum of N elements in each prefix [1, i] 
+2. Maximum sum of N elements in each suffix [i + 1, 3n]
+
+We can do this with a heap 
+
+-----
+
+Let us discuss how to find the minimum sum of N elements in each prefix 
+
+Maintain a maximum heap
+
+Maintain the invariant that maximum heap contains the N smallest elements in [1, i - 1]
+
+When processing A[i], check if A[i] is smaller than the top of the heap 
+If it is, then we can get a smaller sum by including A[i] 
+So pop the top of the heap and push in A[i]
+
+Do a symmetric thing for the maximum sum in each suffix
+
+-----
+
+class Solution {
+public:
+    long long minimumDifference(vector<int> &A) 
+    {
+        priority_queue <long long, vector <long long>, greater <long long>> PQ; 
+        int n = A.size()/3;
+        
+        long long sum = 0;
+        vector <long long> maximum_sum(A.size() + 1, 0);
+        for(int i = A.size() - 1; i >= 0; i--)
+        {
+            if(PQ.size() < n)
+            {
+                PQ.push(A[i]);
+                sum += A[i];
+            }
+            else if(PQ.size() == n)
+            {
+                if(PQ.top() < A[i])
+                {
+                    sum -= PQ.top(); 
+                    PQ.pop(); 
+                    PQ.push(A[i]);
+                    sum += A[i];
+                }
+            }
+            
+            maximum_sum[i] = sum;
+        }
+        
+        const long long oo = 1e14; 
+        sum = 0;
+        vector <long long> minimum_sum(A.size() + 1, oo);
+        priority_queue <long long > min_PQ;
+        for(int i = 0; i < A.size(); i++)
+        {
+            if(min_PQ.size() < n)
+            {
+                min_PQ.push(A[i]);
+                sum += A[i]; 
+            }
+            else if(min_PQ.size() == n)
+            {
+                if(min_PQ.top() > A[i])
+                {
+                    sum -= min_PQ.top(); 
+                    min_PQ.pop(); 
+                    min_PQ.push(A[i]);
+                    sum += A[i];
+                }
+            }
+            
+            minimum_sum[i] = sum;
+        }
+        
+        long long answer = oo;
+        
+        for(int i = n - 1; i < 2*n; i++)
+        {
+            answer = min(answer, minimum_sum[i] - maximum_sum[i + 1]);
+        }
+        
+        return answer;
+    }
+};
