@@ -1,0 +1,35 @@
+Let us sort all the digits of the number 
+D1 < D2 < D3 < D4 
+
+In order to minimize the sum, we will need to add two 2-digit numbers as the maximum will be smaller than using a 3 digit number 
+We also need to minimize the digits in the more significant positions 
+
+D1 D3 
+D2 D4
+
+Is the answer
+
+-----
+
+class Solution 
+{
+    public:
+    
+    int minimumSum(int num) 
+    {
+        int prefix = 0, suffix = 0, suffix_digits = 0;
+        int answer = 1e5;
+        vector <int> D(4);
+        for(int i = 0; i < 4 && num > 0; i++)
+        {
+            D[i] = num%10;
+            num /= 10;
+        }
+        
+        sort(D.begin(), D.end());
+        
+        int x = D[0]*10 + D[2], y = D[1]*10 + D[3];
+        
+        return x + y;
+    }
+};
