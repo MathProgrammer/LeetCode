@@ -1,0 +1,74 @@
+Let us iterate over all combinations of minutes and seconds and check the cost for those combinations where the targetSeconds is achieved. 
+Now, let us check how we can calculate the cost for a given (minute, second) combination. 
+
+First of all, convert it to a string. 
+If the minutes are 0, then omit the minutes 
+If the minutes are non 0 and the seconds are a single digit, then append a 0 to the prefix of the seconds. 
+
+Then, traverse the string and check if we need an additional MoveCost for each move. 
+PushCosts will happen at every step. 
+
+-----
+
+class Solution {
+public:
+    
+    int get_cost(int minutes, int seconds, int startAt, int moveCost, int pushCost)
+    {
+        string minute = to_string(minutes), second = to_string(seconds);
+        
+        string S ;
+        
+        if(minutes == 0)
+        {
+            S = second;
+        }
+        else 
+        {
+            if(second.size() == 1)
+            {
+                second = (char)('0') + second;
+            }
+            
+            S = minute + second;
+        }
+        
+        char current = (char)('0' + startAt);
+        
+        int cost = 0;
+        
+        for(int i = 0; i < S.size(); i++)
+        {
+            if(S[i] != current)
+            {
+                cost += moveCost;
+            }
+            
+            cost += pushCost;
+            current = S[i];
+        }
+        
+        
+        
+        return cost;
+    }
+    
+    int minCostSetTime(int startAt, int moveCost, int pushCost, int targetSeconds) 
+    {
+        const int MAX_TIME = 100, oo = 1e9;
+        int cost = oo;
+        for(int minutes = 0; minutes < MAX_TIME; minutes++)
+        {
+            for(int seconds = 0; seconds < MAX_TIME; seconds++)
+            {
+                if(minutes*60 + seconds == targetSeconds)
+                {
+                    int cost_here = get_cost(minutes, seconds, startAt, moveCost, pushCost);
+                    cost = min(cost, cost_here);
+                }
+            }
+        }
+        
+        return cost;
+    }
+};
