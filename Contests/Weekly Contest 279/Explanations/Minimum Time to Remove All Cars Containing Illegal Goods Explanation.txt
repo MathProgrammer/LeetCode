@@ -1,0 +1,64 @@
+We will have 
+
+1. Some prefix moves 
+2. Some middle moves 
+3. Some suffix moves 
+
+Again, we will think about how to iterate over all possibilities. 
+
+Let P(i) be the minimum moves to make sure [1, i] has no 1's 
+We have 2 options - 
+
+1. Remove all letters in [1, i] 
+2. Make [1, i - 1] free of 1's and then delete S[i] with cost 2 
+
+P[i] = min(i, P[i - 1] + 2)
+
+We do a similar thing for the suffix. 
+
+We will make these moves for some prefix and some suffix.
+
+We will fix a position i, and then calculate the cost of making prefix [1, i] and suffix [i + 1, n] good. 
+
+-----
+
+class Solution 
+{
+    public:
+    int minimumTime(string S) 
+    {
+        vector <int> prefix_moves(S.size(), 0);
+        for(int i = 0, length = 1; i < S.size(); i++, length++)
+        {
+            if(i == 0)
+            {
+                prefix_moves[i] = min(length, 2*(S[i] == '1'));
+            }
+            else 
+            {
+                prefix_moves[i] = min(length, prefix_moves[i - 1] + 2*(S[i] == '1'));
+            }
+        }
+        
+        vector <int> suffix_moves(S.size() + 1, 0);
+        for(int i = S.size() - 1, length = 1; i >= 0; i--, length++)
+        {
+            if(i == S.size() - 1)
+            {
+                suffix_moves[i] = min(length, 2*(S[i] == '1'));
+            }
+            else 
+            {
+                suffix_moves[i] = min(length, suffix_moves[i + 1] + 2*(S[i] == '1'));
+            }
+        }
+        
+        int answer = S.size();
+        for(int i = 0; i < S.size(); i++)
+        {
+            answer = min(answer, prefix_moves[i] + suffix_moves[i + 1]);
+        }
+        
+        return answer;
+    }
+};
