@@ -1,0 +1,107 @@
+All the operations can be done in O(1) time except the flip. 
+We will not actually perform the flip in any operation other than returning the actual string. 
+
+Only 5 calls will be made to toString. 
+
+We will keep track of the number of flips (mod 2)
+When we have to perform a flip, update the sum to (S.size() - sum)
+
+Be very carefuly while performing the set or unset operations. 
+Set or unset appropriately depending on whether flips is 0 or 1
+
+----
+class Bitset {
+public:
+    
+    string S;
+    int sum, flips;
+    
+    Bitset(int size) 
+    {
+        for(int i = 0; i < size; i++)
+        {
+            S += (char)('0');
+        }
+        
+        sum = 0;
+        flips = 0;
+    }
+    
+    void fix(int idx) 
+    {
+        if(S[idx] == '0' && flips == 0)
+        {
+            S[idx] = '1';
+            sum++;
+        }
+        
+        if(S[idx] == '1' && flips == 1)
+        {
+            S[idx] = '0';
+            sum++;
+        }
+        
+        //cout << "Sum = " << sum << "\n";
+    }
+    
+    void unfix(int idx) 
+    {
+        if(S[idx] == '1' && flips == 0)
+        {
+            S[idx] = '0';
+            sum--;
+        }   
+        
+        if(S[idx] == '0' && flips == 1)
+        {
+            S[idx] = '1';
+            sum--;
+        }
+        
+         //cout << "Unfix " << idx << " Sum = " << sum << "\n";
+    }
+    
+    void flip() 
+    {
+         flips++;
+         flips %= 2;
+        
+         sum = (S.size() - sum); //cout << "Sum = " << sum << "\n";
+    }
+    
+    bool all() 
+    {
+        //cout << "Flips = " << flips << " Sum = " << sum << "\n";
+        return (sum == S.size());
+    }
+    
+    bool one() 
+    {
+        return (sum > 0);
+    }
+    
+    int count() 
+    {
+        return sum;
+    }
+    
+    string toString() 
+    {
+        if(flips == 0)
+        {
+            return S;
+        }
+        
+        for(int i = 0; i < S.size(); i++)
+        {
+            switch(S[i])
+            {
+                case '1': S[i] = '0'; break;
+                case '0': S[i] = '1'; break;
+            }
+        }
+        flips = 0;
+        
+        return S;
+    }
+};
