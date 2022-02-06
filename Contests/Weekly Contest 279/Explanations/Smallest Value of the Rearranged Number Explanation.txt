@@ -1,0 +1,64 @@
+If the number is positive, then put 1 occurence of the smallest non-0 digit 
+After than, put the rest of the number in sorted order. 
+
+If the number is negative, sort the digits in descending order. 
+
+-----
+class Solution {
+public:
+    
+    void get_frequency(long long n, vector <int> &F)
+    {
+        while(n > 0)
+        {
+            F[n%10]++;
+            n /= 10;
+        }
+    }
+    
+    long long smallestNumber(long long num) 
+    {
+        const int NO_OF_DIGITS = 10;
+        vector <int> frequency(NO_OF_DIGITS, 0);
+        get_frequency(abs(num), frequency);
+        
+        long long answer = 0;
+        if(num > 0)
+        {
+            int first = 0;
+            for(int d = 1; d < NO_OF_DIGITS; d++)
+            {
+                if(frequency[d] > 0)
+                {
+                    first = d; 
+                    break;
+                }
+            }
+            
+            answer = first; 
+            frequency[first]--;
+            
+            for(int d = 0; d < NO_OF_DIGITS; d++)
+            {
+                for(int i = 1; i <= frequency[d]; i++)
+                {
+                    answer = answer*10 + d;
+                }
+            }
+        }
+        else if(num < 0)
+        {
+            for(int d = NO_OF_DIGITS - 1; d >= 0; d--)
+            {
+                for(int i = 1; i <= frequency[d]; i++)
+                {
+                    answer = answer*10 + d;
+                }
+            }
+            
+            answer *= -1;
+        }
+        
+        return answer;
+    }
+};
