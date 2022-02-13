@@ -1,0 +1,48 @@
+Let P(i) be the sum of all elements <= i 
+Let S(i) be the sum of all elements >= i 
+Let Sc(i) be the count of all elements >= i 
+
+Let us iterate over each i, and calculate the cost of setting i as the final elements. 
+All elements smaller than i have to be removed with cost P(i) 
+All elements larger than i have to be made equal to i, with cost (S(i) - i*Sc(i))
+
+Find the best i
+
+If the array elements were large, we could do coordinate compression and apply the same solution. 
+
+-----
+
+class Solution {
+public:
+    long long minimumRemoval(vector<int> &A) 
+    {
+        const int MAX_N = 1e5 + 1; 
+        vector <long long> frequency(MAX_N, 0);
+        for(int i = 0; i < A.size(); i++)
+        {
+            frequency[A[i]]++;
+        }
+        
+        vector <long long> prefix_sum(MAX_N, 0);
+        for(int i = 1; i < MAX_N; i++)
+        {
+            prefix_sum[i] = prefix_sum[i - 1] + frequency[i]*i;
+        }
+        
+        vector <long long> suffix_sum(MAX_N + 1, 0), suffix_count(MAX_N + 1, 0);
+        for(int i = MAX_N - 1; i >= 1; i--)
+        {
+            suffix_sum[i] = suffix_sum[i + 1] + frequency[i]*i;
+            suffix_count[i] = suffix_count[i + 1] + frequency[i];
+        }
+        
+        const long long oo = 1e18;
+        long long answer = oo;
+        for(int i = 1; i < MAX_N; i++)
+        {
+            answer = min(answer, prefix_sum[i - 1] + suffix_sum[i + 1] - i*suffix_count[i + 1]);
+        }
+        
+        return answer;
+    }
+};
