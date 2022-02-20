@@ -1,0 +1,41 @@
+Keep a pointer to the lastzero node 
+While visiting a nonzero node, add val to lastzero-> val 
+
+While visiting a zero node, make lastzero->next = current and lastzero = current 
+
+The only special case is when we reach the last node. 
+In this case, make lastzero->next = current->next = NULL 
+
+-----
+
+class Solution {
+public:
+    ListNode* mergeNodes(ListNode* head) 
+    {
+        ListNode* current = head->next;
+        ListNode* lastzero = head;
+        while(current != NULL)
+        {
+            if(current->val != 0)
+            {
+                lastzero->val += current->val;
+            }
+            else if(current->val == 0)
+            {
+                if(current->next == NULL)
+                {
+                    lastzero->next = current->next; 
+                }
+                else 
+                {
+                    lastzero->next = current;
+                    lastzero = current;
+                }
+            }
+            
+            current = current->next;
+        }   
+        
+        return head;
+    }
+};
