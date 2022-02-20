@@ -17,6 +17,10 @@ m x C = 0 (mod K)
 
 If C is a complement, then 2C, 3C, 4C, etc are all complements 
 
+For each m, visit all multiples of complement (i x C) as long as (i x C < K)
+After that (i x C) will by cyclic since C is a divisor of K and we would already have counted the pair (i x C, m) 
+When we had visited (i x C) since (i x C < m)
+
 -----
 
 In order to find the complement quickly, keep track of the prime factorisation of K 
@@ -30,6 +34,11 @@ C = p1^{e1 - m1} x p2^{e2 - m2}
 -----
 
 Ensure that each pair is only counted one time.
+
+In order to do that, 
+
+1. Count (m, C) only if m < C, so the pair does not get counted twice. 
+2. If m = C, count C(m, 2)
 
 -----
 
