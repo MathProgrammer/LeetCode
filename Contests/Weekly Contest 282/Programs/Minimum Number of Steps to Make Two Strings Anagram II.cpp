@@ -1,0 +1,27 @@
+class Solution {
+public:
+    
+    void calculate(string S, vector <int> &F)
+    {
+        for(int i = 0; i < S.size(); i++)
+        {
+            F[S[i] - 'a']++;
+        }
+    }
+    
+    int minSteps(string S, string T) 
+    {
+        const int NO_OF_ALPHABETS = 26; 
+        vector <int> frequency_S(NO_OF_ALPHABETS, 0), frequency_T(NO_OF_ALPHABETS, 0);
+        calculate(S, frequency_S);
+        calculate(T, frequency_T);
+        
+        int answer = 0;
+        for(int alpha = 0; alpha < NO_OF_ALPHABETS; alpha++)
+        {
+            answer += abs(frequency_S[alpha] - frequency_T[alpha]);
+        }
+        
+        return answer;
+    }
+};
