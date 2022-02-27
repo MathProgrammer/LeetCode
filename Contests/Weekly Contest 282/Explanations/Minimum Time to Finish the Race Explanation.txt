@@ -14,9 +14,13 @@ So, we will never do more than 20 consecutive laps.
 -----
 
 Let f(i) be the minimum time required to finish i laps (consecutive or not). 
-In order to compute f(i), we will iterate over the best j, such that we did j CONSECUTIVE laps from [i - j, i]
+In order to compute f(i), we will iterate over the best j, such that we did j CONSECUTIVE laps from (i - j, i]
 
-f(i) = change_cost + min{f(i - j) + best_cost[j] + f(i - j)}
+f(i) = change_cost + min{f(i - j) + best_cost[j]}
+
+The base case is when (i - j = 0). There is no change_cost when we first start. 
+
+If i = j, f(i) = B(j)
 
 -----
 
