@@ -1,0 +1,57 @@
+Let us fix the time T and calculate the number of trips completed in [0, T] 
+
+This is sum(T/time[i]) 
+
+We can notice that if we cannot finish the total number of trips in time T, we cannot finish it in time T - 1 
+If we can finish it in time T, we would have finished it in time T + 1 too 
+
+So, we creatively invert the question and ask 
+"How many trips are completed in T seconds ?" 
+
+We then binary search over this T to find the smallest such T 
+
+Maintain the invariant that we can never finish all trips in L seconds and always finish it in R seconds. 
+Stop when R - L = 1 
+The answer is R 
+
+-----
+
+class Solution {
+public:
+    
+    int completed_trips(vector <int> &time, long long T, int total_trips)
+    {
+        long long trips = 0;
+        for(int i = 0; i < time.size(); i++)
+        {
+            trips += (T/time[i]);
+            if(trips > total_trips)
+            {
+                return true;
+            }
+        }
+        
+        return (trips >= total_trips ? true : false);
+    }
+    
+    long long minimumTime(vector<int>& time, int totalTrips) 
+    {
+        long long left = 0, right = 1e18;
+        while(right - left > 1)
+        {
+            long long mid = (left + right)/2;
+            
+            if(completed_trips(time, mid, totalTrips))
+            {
+                right = mid;
+            }
+            else 
+            {
+                left = mid;
+            }
+        }
+        
+        long long answer = right;
+        return answer;
+    }
+};
