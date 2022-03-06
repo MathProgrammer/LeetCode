@@ -1,0 +1,25 @@
+We can iterate over all the cells in a column major order 
+
+class Solution {
+public:
+    vector<string> cellsInRange(string S) 
+    {
+        vector <string> answer; 
+        char starting_column = S[0], ending_column = S[3]; 
+        char starting_row = S[1], ending_row = S[4];
+        
+        for(char c = starting_column; c <= ending_column; c++)
+        {
+            for(char r = starting_row; r <= ending_row; r++)
+            {
+                string cell;
+                cell += c;
+                cell += r;
+                
+                answer.push_back(cell);
+            }
+        }
+        
+        return answer;
+    }
+};
