@@ -1,6 +1,6 @@
 We will simulate the process - once from left to right and then from right to left 
 
-Although I do not have a proof, we will not perform too many simulations like this. 
+Although I do not have a proof, we will not perform too many simulations like this. (At most 4)
 
 ----
 
