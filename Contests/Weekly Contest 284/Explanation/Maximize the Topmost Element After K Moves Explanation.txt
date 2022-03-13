@@ -1,0 +1,38 @@
+If there is only one element and we have to do an odd number of moves, we will always finish with an empty pile. 
+
+If there are multiple elements, we can always end with a non empty stack. 
+Remove 1 or 2 elements depending on the parity of the stack and then keep on  placing and popping. 
+
+We can have any of A[1, k - 1] or A[k + 1] as the maximum.
+
+We can do (k - 1) pop's and then place the maximum element in the top 
+Or we can do k pops and the front will be A[k + 1] 
+
+It is impossible for us to have A[k] as the front facing elements 
+
+Please note that if k > nums.size() + 1 , then we can make waiting moves (placing, popping) with the first element till k = nums.size() + 1
+
+-----
+class Solution {
+public:
+    int maximumTop(vector<int>& nums, int k) 
+    {
+        if(nums.size() == 1 && k%2 == 1)
+        {
+            return -1;
+        }
+        
+        int answer = 0; 
+        for(int i = 0; i < nums.size() && i < k - 1; i++)
+        {
+            answer = max(answer, nums[i]); 
+        }
+        
+        if(k <= nums.size())
+        {
+            answer = max(answer, nums[k]); 
+        }
+        
+        return answer;
+    }
+};
