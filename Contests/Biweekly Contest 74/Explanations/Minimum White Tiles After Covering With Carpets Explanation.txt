@@ -1,0 +1,65 @@
+Let f(i, c) be the minimum number of tiles visible if we have used up c carpets in the first i tiles 
+
+Option 1 - The c-th carpet ends at the i-th cell 
+f(i, c) = f(i - L, c - 1) 
+
+Option 2 - The c-th carpet ends somewhere before the i-th cell 
+The i-th cell will be visible if it is white and we will add it to the minimum visible tiles in [1, i - 1] with c - 1 carpets 
+
+f(i, c) = (A[i] == 1) + f(i - 1, c) 
+
+-----
+
+f(i, 0) = The number of 1's in [1, i] 
+
+The answer is f(n, C)
+
+-----
+
+class Solution {
+public:
+    
+    int min(int x, int y)
+    {
+        return (x < y ? x : y);
+    }
+    
+    int minimumWhiteTiles(string floor, int num_carpets, int carpet_len) 
+    {
+        const int oo = 1e9;
+        const char WHITE = '1';
+        vector <vector <int> > minimum_tiles(floor.size(), vector <int> (num_carpets + 1, oo));
+        for(int i = 0; i < floor.size(); i++)
+        {
+            minimum_tiles[i][0] = (floor[i] == WHITE);
+            
+            if(i > 0)
+            {
+                minimum_tiles[i][0] += minimum_tiles[i - 1][0];
+            }
+            
+        }
+        
+        for(int i = 0; i < floor.size(); i++)
+        {
+            for(int c  = 1; c <= num_carpets; c++)
+            {
+                if(carpet_len*c>= i + 1)
+                {
+                    minimum_tiles[i][c] = 0; 
+                    continue;
+                }
+                
+                minimum_tiles[i][c] = minimum_tiles[i - carpet_len][c - 1];
+                
+                if(i > 0)
+                {
+                    minimum_tiles[i][c] = min(minimum_tiles[i][c], minimum_tiles[i - 1][c] + (floor[i] == WHITE));
+                }
+                
+            }
+        }   
+    
+        return minimum_tiles[floor.size() - 1][num_carpets];
+    }
+};
