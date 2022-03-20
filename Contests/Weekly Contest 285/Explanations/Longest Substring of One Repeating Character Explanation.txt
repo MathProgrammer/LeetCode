@@ -37,6 +37,26 @@ P.prefix = L.suffix + R.suffix
 
 -----
 
+void merge(Node &Parent, Node &L, int left_1, int right_1, Node &R, int left_2, int right_2)
+    {
+        Parent.prefix = L.prefix;
+        if(L.prefix == right_1 - left_1 + 1)
+        {
+            Parent.prefix += R.prefix;
+        }
+        
+        Parent.suffix = R.suffix;
+        if(R.suffix == right_2 - left_2 + 1)
+        {
+            Parent.suffix += L.suffix;
+        }
+        
+        Parent.answer = max(L.answer, R.answer);
+        Parent.answer = max(Parent.answer, L.suffix + R.prefix);
+    }
+    
+-----
+
 Now, we will make 26 arrays corresponding to each alphabet. 
 In array 'alpha' 
 
