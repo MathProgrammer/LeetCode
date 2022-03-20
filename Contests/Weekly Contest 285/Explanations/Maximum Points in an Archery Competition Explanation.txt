@@ -1,0 +1,100 @@
+Let us use bitmasks of length 12 
+
+If the i-th bit is set in the mask, it means bob has won this particluar target. 
+
+For each bitmask, determine 
+
+1. The score if bob wins in all these targets 
+2. Is it possible to win with N arrows in these targets 
+
+-----
+
+The score is simply the sum of the indices where the bits are set
+
+int score(int mask, int no_of_bits)
+    {
+        int score = 0;
+        for(int bit = 0; bit < no_of_bits; bit++)
+        {
+            if(is_bit_set(mask, bit))
+            {
+                score += bit;
+            }
+        }
+        score++;
+        
+        return score;
+    }
+    
+-----
+
+The minimum number of arrows to win in all the given targets can be obtained by 
+adding 1 to the number of arrows Alice shoots at each target 
+
+int required(int mask, int no_of_bits, vector <int> &alice)
+    {
+        int required_arrows = 0;
+        for(int bit = 0; bit < no_of_bits; bit++)
+        {
+            if(is_bit_set(mask, bit))
+            {
+                required_arrows += alice[bit] + 1;
+            }
+        }
+        
+        return required_arrows;
+    }
+    
+-----
+
+Among all bitmasks choose the bitmask with the highest score and construct it greedily 
+
+Allow Bob to shoot just 1 arrow more than Alice in each target Bob wins 
+
+All the remaining arrows can be shot arbitrarily 
+
+
+vector <int> construct(int mask, int no_of_bits, vector <int> &alice, int total)
+    {
+        vector <int> bob(no_of_bits);
+        for(int bit = 0; bit < no_of_bits; bit++)
+        {
+            if(is_bit_set(mask, bit))
+            {
+                bob[bit] = alice[bit] + 1;
+                total -= bob[bit];
+            }
+        }
+        
+        for(int bit = 0; bit < no_of_bits; bit++)
+        {
+            if(!is_bit_set(mask, bit) && total > 0)
+            {
+                bob[bit] = total;
+                total -= bob[bit];
+            }
+        }
+        
+        return bob;
+    }
+    
+-----
+
+vector<int> maximumBobPoints(int numArrows, vector<int>& aliceArrows) 
+    {
+        const int NO_OF_TARGETS = 12;
+        const int MAX_MASK = (1 << NO_OF_TARGETS);
+        
+        int bob_score = 0; 
+        vector <int> bob_arrows(NO_OF_TARGETS);
+        for(int m = 0; m < MAX_MASK; m++)
+        {
+            if(score(m, NO_OF_TARGETS) > bob_score && required(m, NO_OF_TARGETS, aliceArrows) <= numArrows)
+            {
+                bob_score = score(m, NO_OF_TARGETS);
+                bob_arrows = construct(m, NO_OF_TARGETS, aliceArrows, numArrows);
+            }
+        }
+        
+        return bob_arrows;
+    }
