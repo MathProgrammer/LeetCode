@@ -1,1 +1,130 @@
+  We will make the Z array of the string. 
+  
+  In the Z array, Z[i] = the length of the longest prefix of i, starting at i 
+  
+  And then sum over the Z array. 
+  
+  ------
+  
+  The main idea to compute the Z-array in O(n) time is to maintain a window [L, R] such that 
+  
+  1. It contains i
+  2. It is the largest segment which matches with a prefix of the string i.e. S[0, ... R - L] = S[L, R] 
+  
+  ------
+  
+  Here, is how we update it. 
+  
+  If i is outside the range - i > R 
+  
+  Then, set L = R = i and perform a sweep. 
+  
+  If i is within the range 
+  
+  1. This means S[i] = S[i - L] 
+
+Check if Z[i - L] < R - i + 1
+If yes, just set Z[i] = Z[i - L] 
+
+If not, then start a new segment from i. Set L = i, and keep updating R as long as S[R] = S[R - L] 
+
+Each element is visited at most once by L and R 
+
+So, it is O(n)
+  
+  -----
+  
+  class Solution {
+public:
+    long long sumScores(string S) 
+    {
+        vector <int> Z(S.size());
+        Z[0] = S.size();
+        for(int i = 1, left = 0, right = 0; i < S.size(); i++)
+        {
+            if(i > right)
+            {
+                left = right = i;
+                
+                while(right < S.size() && S[right] == S[right - left])
+                {
+                    right++;
+                }
+                
+                Z[i] = right - left;
+                right--;
+            }
+            else 
+            {
+                int prefix_distance = i - left;
+                
+                if(Z[prefix_distance] < right - i + 1)
+                {
+                    Z[i] = Z[prefix_distance];
+                }
+                else 
+                {
+                    left = i; 
+                    while(right < S.size() && S[right - left] == S[right])
+                    {
+                        right++;
+                    }
+                    
+                    Z[i] = right - left;
+                    right--;
+                }
+            }
+            
+            
+            //cout << "i = " << i << " [" << left << "," << right << "] Z = " << Z[i] << "\n";
+        }
+        
+        long long answer = 0;
+        for(int i = 0; i < S.size(); i++)
+        {
+            answer += Z[i];
+        }
+        
+        return answer;
+    }
+};
+
+-----
+
+More elegant implementation (but harder to understand)
+
+class Solution {
+public:
+    long long sumScores(string S) 
+    {
+        vector <int> Z(S.size());
+        Z[0] = S.size();
+        for(int i = 1, left = 0, right = 0; i < S.size(); i++)
+        {
+            if(i <= right)
+            {
+                Z[i] = min(Z[i  - left], right - i + 1);
+            }
+            
+            while(i + Z[i]  < S.size() && S[i + Z[i]] == S[Z[i]])
+            {
+                Z[i]++;
+            }
+            
+            if(right < i + Z[i])
+            {
+                left = i;
+                right = i + Z[i] - 1;
+            }
+        }
+        
+        long long answer = 0;
+        for(int i = 0; i < S.size(); i++)
+        {
+            answer += Z[i];
+        }
+        
+        return answer;
+    }
+};
   
