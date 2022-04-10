@@ -10,6 +10,8 @@
 - However, we could make the prefix of length $i$ equal to some value between $A_i$ and $A_{i + 1}$
 - So, increase the answer by $(F - S - P_i)/i$
 
+This has good pictures to visualise - https://leetcode.com/problems/maximum-total-beauty-of-the-gardens/discuss/1931085/Explanation-with-pictures-Greedy.
+
 ------
 
 class Solution {
