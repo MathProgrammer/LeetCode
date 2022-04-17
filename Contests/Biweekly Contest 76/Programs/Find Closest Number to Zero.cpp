@@ -1,0 +1,17 @@
+class Solution {
+public:
+    int findClosestNumber(vector<int>& nums) 
+    {
+        int answer = nums[0];
+        
+        for(int i = 0; i < nums.size(); i++)
+        {
+            if( abs(nums[i] - 0) < abs(answer - 0) || (abs(nums[i] - 0) == abs(answer - 0) && (answer < nums[i])) )
+            {
+                answer = nums[i];
+            }
+        }
+        
+        return answer;
+    }
+};
