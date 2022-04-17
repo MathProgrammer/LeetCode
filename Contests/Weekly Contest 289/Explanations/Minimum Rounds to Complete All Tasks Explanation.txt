@@ -1,0 +1,42 @@
+Keep in mind that it is better to do 6 as 3 + 3 than 2 + 2 + 2 
+
+So, we will make as many 3's as possible. 
+
+There are possible values for N mod 3 
+
+0 -> 3 + 3 + 3 ... 
+1 -> (n - 4) + 2 + 2
+2 -> (n - 2) + 2
+
+-----
+
+class Solution {
+public:
+    int minimumRounds(vector<int>& tasks) 
+    {
+        map <int, int> frequency; 
+        for(int i = 0; i < tasks.size(); i++)
+        {
+            frequency[tasks[i]]++;
+        }
+        
+        int answer = 0;
+        for(auto it = frequency.begin(); it != frequency.end(); it++)
+        {
+            if(it->second == 1)
+            {
+                answer = -1;
+                break;
+            }
+            
+            switch( (it->second)%3 )
+            {
+                case 0: answer += it->second/3; break; 
+                case 1: answer += (it->second - 4)/3 + 2; break; 
+                case 2: answer += (it->second - 2)/3 + 1; break;
+            }
+        }
+        
+        return answer;
+    }
+};
