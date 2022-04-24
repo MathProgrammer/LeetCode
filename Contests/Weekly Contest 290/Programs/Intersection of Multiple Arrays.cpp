@@ -1,0 +1,23 @@
+class Solution {
+public:
+    vector<int> intersection(vector<vector<int>>& nums) 
+    {
+        vector <int> answer;
+        map <int, int> frequency; 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            for(int j = 0; j < nums[i].size(); j++)
+            {
+                frequency[nums[i][j]]++;
+                
+                if(frequency[nums[i][j]] == nums.size())
+                {
+                    answer.push_back(nums[i][j]);
+                }
+            }
+        }
+        
+        sort(answer.begin(), answer.end());
+        return answer;
+    }
+};
