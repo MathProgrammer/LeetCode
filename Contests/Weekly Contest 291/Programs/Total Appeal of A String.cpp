@@ -2,9 +2,10 @@ class Solution {
 public:
     long long appealSum(string S) 
     {
-        const int NO_OF_ALPHABETS = 26;
+        const int NO_OF_ALPHABETS = 26, NOT_FOUND = -1;
         long long answer = 0;
         vector <int> first_index(NO_OF_ALPHABETS, NOT_FOUND);    
+        vector <long long> contribution(S.size(), 0);
         for(int i = 0; i < S.size(); i++)
         {   
             if(i == 0)
