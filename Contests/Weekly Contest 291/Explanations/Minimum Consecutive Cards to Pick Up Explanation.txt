@@ -1,0 +1,28 @@
+Let L[i] be the last occurence of the number i 
+
+For every C[i] in the array, let us find the minimum segment length that would have two occurences of C[i]. 
+
+It is [L[C[i]], C[i]] - Choose the best such i
+
+------
+
+class Solution {
+public:
+    int minimumCardPickup(vector<int>& cards) 
+    {
+        int answer = cards.size() + 1;
+        map <int, int> last_occurence; 
+        for(int i = 0; i < cards.size(); i++)
+        {
+            if(last_occurence[cards[i]] != 0)
+            {
+                answer = min(answer, i + 1 - last_occurence[cards[i]] + 1);
+            }
+            
+            last_occurence[cards[i]] = i + 1;
+        }
+        
+        return (answer > cards.size() ? -1 : answer);
+    }
+    
+};
