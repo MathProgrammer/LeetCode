@@ -1,0 +1,79 @@
+Let f(i, second last, last) be the number of distinct roll sequences of 
+
+Length i 
+second last roll = second last 
+last roll = last 
+
+The reason we need to keep track of both last and second last in our state is because of the constraint that 
+equal values must not repeat for length at least 2. 
+
+We can transition from 
+
+f(i - 1, third last, second last) to f(i, second last, last) by checking the conditions - 
+
+1. gcd(third last, second last) > 1 
+2. third last != second last 
+3. gcd(second last, last) > 1
+4. second last != last 
+5. last != third last 
+
+The answer to the problem is the sum of f(n, second last, last), for all possible pairs (second last, last). 
+
+-----
+class Solution {
+public:
+    int distinctSequences(int n) 
+    {
+        if(n == 1)
+        {
+            return 6;
+        }
+        
+        const int MAX_N = 1e4 + 5, MAX_FACES = 6, MOD = 1e9 + 7;
+        long long no_of_sequences[MAX_N][MAX_FACES + 1][MAX_FACES + 1];
+        
+        for(int i = 2; i <= n; i++)
+        {
+            for(int last = 1; last <= MAX_FACES; last++)
+            {
+                for(int second_last = 1; second_last <= MAX_FACES; second_last++)
+                {
+                    no_of_sequences[i][second_last][last] = 0;
+                    if(__gcd(last, second_last) != 1 || last == second_last)
+                    {
+                        continue;
+                    }
+                    
+                    if(i == 2)
+                    {
+                        no_of_sequences[i][second_last][last] = 1;
+                        continue;
+                    }
+                    
+                    for(int third_last = 1; third_last <= MAX_FACES; third_last ++)
+                    {
+                        if(__gcd(third_last, second_last) != 1 || third_last == last || third_last  == second_last)
+                        {
+                            continue;
+                        }
+                        
+                        no_of_sequences[i][second_last][last] += no_of_sequences[i - 1][third_last][second_last];
+                        no_of_sequences[i][second_last][last] %= MOD;
+                    }
+                }
+            }
+        }
+        
+        long long answer = 0;
+        for(int second_last = 1; second_last <= MAX_FACES; second_last++)
+        {
+            for(int last = 1; last <= MAX_FACES; last++)
+            {
+                answer += no_of_sequences[n][second_last][last];
+                answer %= MOD;
+            }
+        }
+        
+        return answer;
+    }
+};
