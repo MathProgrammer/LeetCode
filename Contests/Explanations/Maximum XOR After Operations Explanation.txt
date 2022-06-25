@@ -1,0 +1,59 @@
+  Notice that when we do AND(x, y), we cannot get a number greater than x or y. 
+  AND(x, y) <= MIN(x, y)
+  
+  The operation will not allow us to set any bit in the answer that was not set before. 
+  
+  -----
+  
+  The maximum XOR of the entire array would contain every bit that is set in at least one integer in the array. 
+  We can show that this is always possible. 
+  
+  If A[i] = 110110
+  We can reduce A[i] to any of it's submasks. 
+  
+  Suppose, we want to reduce A[i] to 100010, 
+  choose X = 010100
+  A[i] XOR X = 100010
+  A[i] AND (A[i] XOR X) = 100010
+  
+  -----
+  
+  We can ensure that every bit that is set in at least one integer in the array is set in exactly one integer. 
+  We can do this by turning off all the occurrences in the other integers. 
+  
+  -----
+  
+  class Solution {
+public:
+    
+    int has_bit(int n, int bit)
+    {
+        return ( (n&(1 << bit)) != 0 );
+    }
+    
+    int maximumXOR(vector<int>& nums) {
+        const int MAX_BITS = 30;
+        vector <int> is_set(MAX_BITS, false);
+        
+        for(int x : nums)
+        {
+            for(int bit = 0; bit < MAX_BITS; bit++)
+            {
+               if(has_bit(x, bit))
+               {
+                    is_set[bit] = true;
+               }
+            }
+        }
+                   
+        int answer = 0;
+        for(int bit = 0; bit < MAX_BITS; bit++)
+        {
+            if(is_set[bit])
+            {
+                answer |= (1 << bit);
+            }
+        }
+        return answer;
+    }
+};
