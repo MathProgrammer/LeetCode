@@ -1,0 +1,35 @@
+First of all, let us notice that the two banks of the river are indepedent. 
+If the number of ways to make houses on one bank is X, the answer is X^2. 
+
+-----
+
+Now, we will show that the number of ways to fill a bank of size N is given by Fibonacci number F[n + 1]
+
+Let F[n] be the number of ways of filling up n slots. 
+F[0] = 1 
+F[1] = 2
+
+Now, when we are filling up n slots, there are two options - 
+1. The n-th slot is filled, in which case we need to add F[n - 2] to it since the (n - 1)th slot is empty. 
+2. The n-th slot is not filled, which is the same as having n - 1 solts = F(n - 1) 
+
+F[n] = F[n - 1] + F[n - 2]
+
+-----
+
+class Solution {
+public:
+    int countHousePlacements(int n) 
+    {
+        const int MOD = 1e9 + 7;
+        vector <long long> no_of_ways(n + 1); 
+        no_of_ways[0] = 1, no_of_ways[1] = 2;
+        for(int i = 2; i <= n; i++)
+        {
+            no_of_ways[i] = (no_of_ways[i - 1] + no_of_ways[i - 2])%MOD;
+        }
+        
+        long long answer = (no_of_ways[n]*no_of_ways[n])%MOD;
+        return answer; 
+    }
+};
