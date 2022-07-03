@@ -1,0 +1,83 @@
+class Solution {
+public:
+    
+    struct point
+    {
+        int value, x, y;
+        
+        point()
+        {
+            value = x = y = 0;
+        }
+        
+        point(int V, int X, int Y)
+        {
+            value = V; 
+            x = X; 
+            y = Y;
+        }
+        
+        int operator<(const point &P) const 
+        {
+            if(value == P.value)
+            {
+                if(x == P.x)
+                {
+                    return (y < P.y);
+                }
+                
+                return (x < P.x);
+            }
+            
+            return (value < P.value);
+        }
+    };
+    
+    int inside_grid(int x, int y, int R, int C)
+    {
+        return (0 <= x && x < R && 0 <= y && y < C);
+    }
+    
+    int countPaths(vector<vector<int>>& grid) 
+    {
+        int rows = grid.size(), columns = grid[0].size();
+        vector <vector <int> > no_of_ways(rows, vector <int> (columns, 0));  
+        
+        int no_of_elements = rows*columns; 
+        priority_queue <point> PQ;
+        for(int i = 0; i < rows; i++)
+        {
+            for(int j = 0; j < columns; j++)
+            {
+                PQ.push(point(grid[i][j], i, j));
+            }
+        }
+        
+        const int MOD = 1e9 + 7, NO_OF_NEIGHBOURS = 4;
+        int next_x[NO_OF_NEIGHBOURS] = {-1, 0, 0, 1}, next_y[NO_OF_NEIGHBOURS] = {0, 1, -1, 0};
+        long long answer = 0;
+        
+        while(PQ.size() > 0)
+        {
+            point P = PQ.top(); 
+            PQ.pop();
+            
+            no_of_ways[P.x][P.y] = 1;
+            for(int n = 0; n < NO_OF_NEIGHBOURS; n++)
+            {
+                int neighbour_x = P.x + next_x[n];
+                int neighbour_y = P.y + next_y[n];
+                if(inside_grid(neighbour_x, neighbour_y, rows, columns) && grid[P.x][P.y] < grid[neighbour_x][neighbour_y])
+                {
+                    no_of_ways[P.x][P.y] += no_of_ways[neighbour_x][neighbour_y];
+                    no_of_ways[P.x][P.y] %= MOD;
+                }
+            }
+            
+            answer += no_of_ways[P.x][P.y];
+            answer %= MOD;
+        }
+        
+        return answer;
+    }
+};
