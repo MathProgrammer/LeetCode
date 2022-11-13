@@ -1,0 +1,11 @@
+class Solution {
+public:
+    vector<double> convertTemperature(double celsius) {
+        const int KELVIN = 0, FARENHEIT = 1;
+        const double KELVIN_CONVERTER = 273.15, FARENHEIT_MULTIPLIER = 1.80, FARENHEIT_CONVERTER = 32.00;
+        vector <double> answer(2);
+        answer[KELVIN] = celsius + KELVIN_CONVERTER;
+        answer[FARENHEIT] = celsius*FARENHEIT_MULTIPLIER + FARENHEIT_CONVERTER;
+        return answer;
+    }
+};
