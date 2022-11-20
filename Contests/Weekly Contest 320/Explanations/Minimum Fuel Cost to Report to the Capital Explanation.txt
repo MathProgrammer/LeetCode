@@ -1,0 +1,58 @@
+We can DFS on the graph. 
+
+Let us answer the question - Minimize the number of cars and fuel to reach a vertex v
+
+----
+
+Let us maintain cars[v] and fuel[v] at each vertex. 
+
+If a vertex is a leaf, then we have to have a car here. 
+cars[v] = 1
+fuel[v] = 0
+
+-----
+
+How to transition from a vertex to it's parent ? 
+
+Firstly, the total fuel needed to reach v is the sum of 
+
+1. The fuel needed to reach all it's children 
+2. Each car would then spend 1 extra liter. 
+
+fuel[v] = sum(fuel[child_v]) + sum(cars[child_v])
+
+What about the number of cars ? 
+
+We can change the number of cars in the following way by being greedy and only using the minimum required. 
+
+cars[v] = ceil(subtree[v]/seats)
+
+-----
+
+We have to build an adjacency list first because it's much easier to answer the problem with the graph represented in that form. 
+
+-----
+
+void dfs(int v, int parent_v, vector <int> &cars, vector <long long> &fuel, vector <int> &subtree, int seats)
+    {
+        subtree[v] = 1;
+        
+        int child_cars = 0;
+        for(int i = 0; i < graph[v].size(); i++)
+        {
+            int child_v = graph[v][i]; 
+            if(child_v == parent_v)
+            {
+                continue;
+            }
+            
+            dfs(child_v, v, cars, fuel, subtree, seats);
+            
+            subtree[v] += subtree[child_v];
+            cars[v] += cars[child_v];
+            fuel[v] += fuel[child_v];
+        }
+        
+        fuel[v] += cars[v];
+        cars[v] = ceil(subtree[v], seats);
+    }
