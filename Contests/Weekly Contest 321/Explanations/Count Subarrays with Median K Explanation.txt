@@ -1,0 +1,85 @@
+Let us construct a new array A where 
+
+1. A[i] = -1, if nums[i] < k 
+2. A[i] = 0, if nums[i] = k 
+3. A[i] = 1, if nums[i] > k 
+
+We are looking for a subarray with median k. 
+This means that the sum of this subarray in A will be either 0 or 1. 
+
+----
+
+We are looking for a subarray with the following conditions - 
+
+1. It contains k - Begins before or on k and ends on or after k 
+2. Has sum = 1 or 0 
+
+If we calculate prefix sums, then the sum of a subarray is 
+
+Sum_till[R] - Sum_till[L - 1] 
+
+-----
+
+We have to ensure the array contains k 
+
+So we will call all elements that occur before k the prefix and all elements that occur on or after k the suffix 
+
+We will keep track of the frequency of every sum in the prefix 
+
+For every sum S in the suffix, we will add prefix_frequency[S] and prefix_frequency[S - 1] to the array 
+
+We will treat k as lying in the suffix. 
+A subarray [L, R] has sum S[R] - S[L - 1] so if a subarray ends at k, we only need to know the previous element. 
+
+-----
+
+class Solution {
+public:
+    int countSubarrays(vector<int>& nums, int k) 
+    {
+        vector <int> A(nums.size());
+        for(int i = 0; i < nums.size(); i++)
+        {
+            if(nums[i] < k)
+            {
+                A[i] = -1;
+            }
+            else if(nums[i] > k)
+            {
+                A[i] = 1;
+            }
+            else 
+            {
+                A[i] = 0;
+            }
+        }
+        
+        int answer = 0, is_prefix = true;
+        vector <int> sum(A.size() + 1, 0);
+        map <int, int> prefix_frequency;
+        map <int, int> suffix_frequency;
+        prefix_frequency[0] = 1;
+        for(int i = 0; i < A.size(); i++)
+        {
+            sum[i] = A[i] + (i > 0 ? sum[i - 1] : 0);
+            
+            if(A[i] == 0)
+            {
+                is_prefix = false; 
+            }
+            
+            if(is_prefix)
+            {
+                prefix_frequency[sum[i]]++; 
+            }
+            else 
+            {
+                suffix_frequency[sum[i]]++;
+                
+                answer += prefix_frequency[sum[i] - 1] + prefix_frequency[sum[i]];
+            } 
+        }
+        
+        return answer;
+    }
+};
