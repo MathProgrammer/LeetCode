@@ -1,0 +1,26 @@
+We are looking for an integer x such that 
+
+x(x + 1)/2 = n(n + 1)/2 - (x - 1)x/2
+
+x(x + 1) = n(n + 1) - x(x - 1) 
+2x^2 = n(n + 1)
+
+-----
+
+class Solution {
+public:
+    int pivotInteger(int n) {
+        int pivot = -1; 
+        
+        for(int x = 1; x <= n; x++)
+        {
+            if(2*x*x == n*(n + 1))
+            {
+                pivot = x;
+                break;
+            }
+        }
+        
+        return pivot;
+    }
+};
