@@ -1,0 +1,64 @@
+Let us notice the following this - 
+
+1. To change a 0 to a 1, we need a 1 to do an OR (0 OR 1) = 1 
+2. To change a 1 to a 0, we need a 1 to do an XOR (1 XOR 1) = 0
+
+----
+
+Suppose we have one pair of indices (1, 1) at both S and T. 
+We can use this index to make all the required changes in the remaining array. 
+
+----
+
+It is possible whenever any of these conditions is fulfilled.
+
+1. S = T already 
+2. There is 
+----
+
+class Solution {
+public:
+    bool makeStringsEqual(string s, string target) {
+        int frequency_1 = 0;
+        int frequency_11 = 0, frequency_01 = 0;
+        for(int i = 0; i < s.size(); i++)
+        {
+            if(s[i] == '1')
+            {
+                frequency_1++;
+            }
+            
+            if(s[i] == '1' && target[i] == '1')
+            {
+                frequency_11++;
+            }
+            
+            if(s[i] == '0' && target[i] == '1')
+            {
+                frequency_01++;
+            }
+        }
+        
+        if(s == target)
+        {
+            return true;
+        }
+        
+        if(frequency_1 == 0)
+        {
+            return false;
+        }
+        
+        if(frequency_11 > 0)
+        {
+            return true;
+        }
+        
+        if(frequency_01 > 0)
+        {
+            return true;
+        }
+        
+        return false;
+    }
+};
