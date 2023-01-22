@@ -10,10 +10,19 @@ We can use this index to make all the required changes in the remaining array.
 
 ----
 
-It is possible whenever any of these conditions is fulfilled.
+Now, let us suppose there is no (1, 1) 
+But there is a (1, 0) and a (0, 1). 
+
+We make the the (0, 1) -> (1, 1) and then reduce it to the above case where we have a (1, 1). 
+
+----
+
+It is possible whenever any of these 3 conditions is fulfilled.
 
 1. S = T already 
-2. There is 
+2. There is at least one (1, 1) index. 
+3. There is at least one (1, 0) and one (0, 1). 
+
 ----
 
 class Solution {
