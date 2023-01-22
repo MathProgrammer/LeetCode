@@ -1,0 +1,78 @@
+Let f(i) be the minimum cost for the first i elements. 
+
+Let us iterate over the ending of the last subarray ending at i. 
+
+f(R) = cost[L, R] + f(L - 1), for all 0 <= L <= R
+
+The only question is how to compute the cost of subarray [L, R] efficiently. 
+
+-----
+
+After fixing R, we will iterate backwards from R to 0
+
+While doing this, we will keep track of the number of unique elements. 
+
+The cost of [L, R] = k + (R - L + 1) - unique_elements
+
+----
+
+How do we count the number of unique elements ? 
+
+Since the range of each A[i] is between 0 and n and n <= 1000, let us keep track of prefix frequency of each element. 
+
+Frequency(n, i) is the frequency of integer n in the first i elements of the array. 
+
+The frequency of A[i] in subarray [L, R] is 
+
+Frequency[A[i], R] - Frequency[A[i], L - 1]
+
+1. We will incremenet the number of unique elements when their range frequency is 1 
+2. We will decrement the number of unique elements when their range frequency is 2. 
+
+----
+
+class Solution {
+public:
+    int minCost(vector<int>& nums, int k) {
+        
+        const int MAX_VALUE = 1001;
+        vector <vector <int> > frequency(MAX_VALUE, vector <int> (nums.size() + 1));
+        for(int n = 0; n < MAX_VALUE; n++)
+        {
+            for(int i = 0; i < nums.size(); i++)
+            {
+                frequency[n][i] = (nums[i] == n) + (i == 0 ? 0 : frequency[n][i - 1]);
+            }
+        }
+        
+        const int oo = 2e9;
+        vector <int> minimum_cost_till(nums.size() + 1, oo);
+        for(int right = 0; right < nums.size(); right++)
+        {
+            int unique_elements = 0;
+            int cost_here = 0;
+            for(int left = right; left >= 0; left--)
+            {
+                int n = nums[left];
+                int frequency_here = frequency[n][right] - (left == 0 ? 0 : frequency[n][left - 1]);
+                
+                if(frequency_here == 1)
+                {
+                    unique_elements++;
+                }
+                else if(frequency_here == 2)
+                {
+                    unique_elements--;
+                }
+                   
+                cost_here = k + (right - left + 1) - unique_elements;
+                   
+                int cost_of_partitioning_here = (left == 0 ? cost_here : cost_here + minimum_cost_till[left - 1]);
+                   
+                minimum_cost_till[right] = min(minimum_cost_till[right], cost_of_partitioning_here);
+            }
+        }
+        
+        return minimum_cost_till[nums.size() - 1];
+    }
+};
