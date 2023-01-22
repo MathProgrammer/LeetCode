@@ -1,0 +1,39 @@
+It is easier to iterate over digits starting from the least significant than the most significant. 
+
+So, let us first reverse n and then calculate the alternating sum starting from the least significant. 
+
+-----
+
+class Solution {
+public:
+    
+    int alternating_sum(int n)
+    {
+        int sum = 0, multiplier = 1;
+        while(n > 0)
+        {
+            int digit = n%10;
+            sum += multiplier*digit; 
+            
+            multiplier *= -1;
+            n /= 10;
+        }
+        
+        return sum;
+    }
+    
+    int reverse(int n)
+    {
+        int rev_n = 0;
+        while(n > 0)
+        {
+            rev_n = rev_n*10 + n%10;
+            n /= 10;
+        }
+        return rev_n;
+    }
+    
+    int alternateDigitSum(int n) {
+        return alternating_sum(reverse(n));
+    }
+};
