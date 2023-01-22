@@ -1,0 +1,26 @@
+When you are asked whether you can reach a final state from a starting state, look for a monovariant or an invariant.
+- This problem is asking us whether we can reach a point, starting from another point with certain allowed operations. 
+- We can try all possibilities but a more elegant approach is to look for a property that either remains the same or always changes. 
+
+# Approach - What happens to the GCD ? 
+- g(x, y) = g(x - y, y) = g(x, y - x)
+- g(2x, y) = 2g(x, y) or g(2x, y) = g(x, y)
+- g(x, 2y) = 2g(x, y) or g(x, 2y) = g(x, y)
+- The GCD either remains the same or doubles at each step. 
+- This means that the final GCD must either remain 1 or be a power of 2. 
+
+-----
+
+class Solution {
+public:
+    
+    int is_power_of_2(int n)
+    {
+        return ( (n&(n - 1)) == 0 ) ;
+    }
+    
+    bool isReachable(int targetX, int targetY) {
+        
+        return is_power_of_2(__gcd(targetX, targetY));
+    }
+};
