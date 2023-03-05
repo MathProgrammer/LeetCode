@@ -1,0 +1,63 @@
+Suppose we have a valid partition at index I and the GCD of [1, i] and [i, n] products is 1. 
+
+This means that there is no integer > 1 which has a multiple in both the prefix and suffix. 
+
+We have to find an index i, such that there is no integer which has multiples in both the prefix and the suffix. 
+It is enough to find an index for which there is no prime integer which has multiples on both sides as it automatically implies the previous statement. 
+
+-----
+
+Let us find a range [L, R] for each integer - The position of it's first and last multiple. 
+
+        const int MAX_N = 1e6 + 5;
+        vector <int> first_index(MAX_N, MAX_N), last_index(MAX_N, -1);
+        for(int i = 0; i < nums.size(); i++)
+        {
+            first_index[nums[i]] = min(first_index[nums[i]], i);
+            last_index[nums[i]] = max(last_index[nums[i]], i);
+        }
+        
+        vector <int> left(MAX_N, MAX_N), right(MAX_N, -1);
+        for(int i = 2; i < MAX_N; i++)
+        {    
+            for(int multiple = i; multiple < MAX_N; multiple += i)
+            {
+                if(first_index[multiple] != MAX_N && last_index[multiple] != -1)
+                {
+                    left[i] = min(left[i], first_index[multiple]);
+                    right[i] = max(right[i], last_index[multiple]);
+                }
+            }
+        }
+
+-----
+
+We need to find the first index i, such that no two segments overlap. 
+
+We can do this with a linear scan by keeping track of the number of segments open at each step. 
+
+        vector <int> segments_starting(nums.size()), segments_ending(nums.size());
+        for(int i = 2; i < MAX_N; i++)
+        {
+            if(left[i] != MAX_N && right[i] != -1)
+            {
+                segments_starting[left[i]]++;
+                segments_ending[right[i]]++;
+            }
+        }
+        
+        int answer = -1;
+        int open_segments = 0;
+        for(int i = 0; i + 1 < nums.size(); i++)
+        {
+            open_segments += segments_starting[i];
+            open_segments -= segments_ending[i];
+            
+            if(open_segments == 0)
+            {
+                answer = i;
+                break;
+            }
+        }
+        
+------
