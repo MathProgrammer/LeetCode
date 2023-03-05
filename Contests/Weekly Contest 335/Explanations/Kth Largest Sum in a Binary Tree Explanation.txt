@@ -1,0 +1,42 @@
+We can do DFS, keeping track of the current level and also keep a vector that stores the sum of all nodes in a given level
+
+After the DFS is over, we can sort the vector and return the K-th value. 
+
+-----
+
+class Solution {
+public:
+    
+    void dfs(TreeNode* v, int level, vector <long long> &level_sum)
+    {
+        if(level_sum.size() <= level)
+        {
+            level_sum.push_back(0);
+        }
+        
+        level_sum[level] += v->val;
+        
+        if(v->left != NULL)
+        {
+            dfs(v->left, level + 1, level_sum);
+        }
+        
+        if(v->right != NULL)
+        {
+            dfs(v->right, level + 1, level_sum);
+        }
+    }
+    
+    long long kthLargestLevelSum(TreeNode* root, int k) {
+        
+        vector <long long> level_sum;
+        level_sum.push_back(0);
+        
+        dfs(root, 1, level_sum);
+        
+        sort(level_sum.begin() + 1, level_sum.end());
+        reverse(level_sum.begin() + 1, level_sum.end());
+        
+        return (level_sum.size() > k ? level_sum[k] : -1);
+    }
+};
