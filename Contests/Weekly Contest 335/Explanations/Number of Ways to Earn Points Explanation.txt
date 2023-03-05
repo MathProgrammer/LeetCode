@@ -1,0 +1,72 @@
+Let us rephrase the problem. 
+
+We are given integers A[1], A[2], A[3], ... , A[n] 
+
+We can choose multipliers M[1], M[2], M[3], ... , M[n] 
+
+We have to count the number of ways of fulfilling the following two conditions. 
+
+1. 
+
+M[1]A[1] + M[2]A[2] + M[3]A[3] + ... + M[n]A[n] = T 
+
+2. 
+
+0 <= M[i] < B[i], for all i
+
+-----
+
+Let us make a DP where f(s, i) is the number of ways to 
+
+1. Reach a sum of s 
+2. Using the first i elements 
+
+f(s, i) = sum(m x A[i] + f(s - m x A[i], i - 1), for all m 
+
+1. Sum of i-th element = m x A[i] 
+2. Previous sum = s - m x A[i] 
+3. Total Sum = Sum of i-th element + Previous sum = s
+
+
+-----
+
+I used two vectors to save space and make it a single dimension DP. 
+
+The answer is f(T, n) 
+
+Since we are saving space with a single dimension only, the answer is just f(T)
+
+------
+
+class Solution {
+public:
+    int waysToReachTarget(int target, vector<vector<int>>& types) 
+    {
+        const int MOD = 1e9 + 7;
+        int no_of_questions = types.size();
+        vector <int> multiplier(no_of_questions + 1);
+        vector <long long> no_of_ways(target + 1);
+        no_of_ways[0] = 1;
+        
+        for(int i = 0; i < no_of_questions; i++)
+        {
+            vector <long long> no_of_ways_here(target + 1);
+            
+            int current_count = types[i][0], current_weight = types[i][1];
+            for(int multiplier = 0; multiplier*current_weight <= target && multiplier <= current_count; multiplier++)
+            {
+                int current_sum = multiplier*current_weight;
+                for(int previous_sum = 0; previous_sum + multiplier*current_weight <= target; previous_sum++)
+                {
+                    int total_sum = previous_sum + current_sum;
+                    no_of_ways_here[total_sum] += no_of_ways[previous_sum];
+                    no_of_ways_here[total_sum] %= MOD;
+                }
+            }
+            
+            no_of_ways = no_of_ways_here;
+        }
+        
+        return no_of_ways[target];
+    }
+};
