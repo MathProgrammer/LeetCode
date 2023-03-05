@@ -1,0 +1,47 @@
+We will reduce it to a smaller problem first 
+1. The pillow is performing a round trip so we will reduce the problem to finding the position of the pillow in the first round trip. 
+2. We will break the first round trip into two straight trips from [1, n] and [n, 1]
+
+-----
+
+Notice that it takes (n - 1) time to reach the other end. 
+A round trip takes 2(n - 1) time. 
+
+So first, we will find out the value of time (mod 2(n - 1)). 
+
+This reduces the problem to finding out the position of the pillow in the first round trip. 
+
+-----
+
+Let us break it down further 
+
+If T < (n - 1), the pillow is still on the journey from 1 -> n 
+
+This means the pillow is at T + 1 
+
+If T >= (n - 1), the pillow has reached n and has begun the return journey 
+
+Number of back steps after reaching n =  T - (n - 1)
+Pillow is at n - back steps
+
+------
+
+class Solution {
+public:
+    int passThePillow(int n, int time) {
+        int round_trip_time = 2*(n - 1);
+        time %= round_trip_time;
+        
+        int answer = 0;
+        if(time > n - 1)
+        {
+            int back_steps = time - (n - 1);
+            answer = n - back_steps;
+        }
+        else 
+        {
+            answer = time + 1;
+        }
+        
+        return answer;
+    }
