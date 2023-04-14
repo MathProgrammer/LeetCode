@@ -1,0 +1,83 @@
+Notice that the constraints do not enforce a O(n^2) solution. 
+
+Also notice that both robots are always on the same row. 
+
+Let f(r, c1, c2) be the maximum amount of cherries picked if the robots start from (r, c1) and (r, c2) 
+
+The transition is the maximum of f() in the next row. 
+
+f(r, c1, c2) = G(r, c1) + G(r, c2) + max{f(r + 1, c'_1, c'_2)}
+
+where c'_1 and c'_2 are all possible neighbours of c_1 and c_2 respectively. 
+
+We can also reduce the time by a constant factor by noticing that the robots never cross. 
+If the robots cross, we can achieve the same result by turning the robots around in their path. 
+
+------
+
+# Cherry Pickup $2$
+
+# The robots are always in the same row and they never cross
+
+![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f38ecae3-5362-465c-bb3a-cc92b9305ae9/Untitled.png)
+
+- First of all, notice the constraints do not enforce a $O(n^2)$ solution.
+- Let $f(r, c_1, c_2)$ be the maximum cherries picked if the robots start from $(r, c_1)$ and $(r, c_2)$.
+    - Where $c’_1, c’_2$ are all possible columns that can be visited from $c_1, c_2$
+
+$$
+f(r, c_1, c_2) = G(r, c_1) + G(r, c_2) + \max\{f(r + 1, c'_1, c'_2)\}
+$$
+
+- In order to save some time by a constant factor, notice that the robots never cross each other. If they cross, it would be the same as the robots turning around. This is a small optimization.
+
+```cpp
+class Solution {
+public:
+
+    int inside(int x, int left, int right)
+    {
+        return (left <= x && x <= right);
+    }
+
+    int cherryPickup(vector<vector<int>>& grid) 
+    {
+        int rows = grid.size(), columns = grid[0].size();
+        int maximum_from[rows][columns][columns];
+        for(int r = rows - 1; r >= 0; r--)
+        {
+            for(int c1 = 0; c1 < columns; c1++)
+            {
+                for(int c2 = c1 + 1; c2 < columns; c2++)
+                {
+                    maximum_from[r][c1][c2] = grid[r][c1] + grid[r][c2];
+
+                    if(r == rows - 1)
+                    {
+                        continue;
+                    }
+
+                    for(int next_c1 = c1 - 1; next_c1 <= c1 + 1; next_c1++)
+                    {
+                        for(int next_c2 = c2 - 1; next_c2 <= c2 + 1; next_c2++)
+                        {
+                            if(!inside(next_c1, 0, columns - 1) || 
+                               !inside(next_c2, 0, columns - 1) || 
+                               next_c1 >= next_c2)
+                               {
+                                   continue;
+                               }
+
+                            maximum_from[r][c1][c2] = max(maximum_from[r][c1][c2], 
+                                grid[r][c1] + grid[r][c2] + 
+                                maximum_from[r + 1][next_c1][next_c2]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return maximum_from[0][0][columns - 1];
+    }
+};
+```
