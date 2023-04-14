@@ -1,0 +1,31 @@
+We can use Bezout's Identity to say that it is only possible when the GCD of the array is 1. 
+
+------
+
+Firstly, let us show that the GCD always divides the sum. 
+Let the GCD be g
+
+a1 + a2 + a3 + ... + an = S 
+G(a1' + a2' = a3' + ... + an') = S 
+
+Therefore, G divides S. 
+
+-----
+
+Bezout's identity says that it is always possible to choose coefficients to make the sum equal to the GCD. 
+
+----
+
+class Solution {
+public:
+    bool isGoodArray(vector<int>& nums) {
+        
+        int gcd = 0;
+        for(int i = 0; i < nums.size(); i++)
+        {
+            gcd = __gcd(gcd, nums[i]);
+        }
+
+        return (gcd == 1);
+    }
+};
