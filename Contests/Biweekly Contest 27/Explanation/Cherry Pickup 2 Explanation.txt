@@ -15,23 +15,6 @@ If the robots cross, we can achieve the same result by turning the robots around
 
 ------
 
-# Cherry Pickup $2$
-
-# The robots are always in the same row and they never cross
-
-![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f38ecae3-5362-465c-bb3a-cc92b9305ae9/Untitled.png)
-
-- First of all, notice the constraints do not enforce a $O(n^2)$ solution.
-- Let $f(r, c_1, c_2)$ be the maximum cherries picked if the robots start from $(r, c_1)$ and $(r, c_2)$.
-    - Where $c’_1, c’_2$ are all possible columns that can be visited from $c_1, c_2$
-
-$$
-f(r, c_1, c_2) = G(r, c_1) + G(r, c_2) + \max\{f(r + 1, c'_1, c'_2)\}
-$$
-
-- In order to save some time by a constant factor, notice that the robots never cross each other. If they cross, it would be the same as the robots turning around. This is a small optimization.
-
-```cpp
 class Solution {
 public:
 
