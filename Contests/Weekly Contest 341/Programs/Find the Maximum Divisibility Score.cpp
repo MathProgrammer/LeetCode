@@ -1,0 +1,27 @@
+class Solution {
+public:
+    int maxDivScore(vector<int>& nums, vector<int>& divisors) 
+    {
+        int answer = 0, best_d = divisors[0];
+        for(int d : divisors)
+        {   
+            int score_here = 0;
+            for(int n : nums)
+            {
+                score_here += (n%d == 0);
+            }
+            
+            if(score_here > answer)
+            {
+                answer = score_here;
+                best_d = d; 
+            }
+            else if(score_here == answer && d < best_d)
+            {
+                best_d = d;
+            }
+        }   
+        
+        return best_d;
+    }
+};
