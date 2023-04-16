@@ -48,7 +48,7 @@ If we do not half the price of a vertex, we can either half or not half each of 
 Let f(v, H) and f(v, NH) represent the minimum contribution of the subtree rooted at v when it is halved and not halved respectively 
 
 f(v, H) = sum f(child, NH)
-f(v, NH) = sum max{f(child, H), f(child, NH)} 
+f(v, NH) = sum min{f(child, H), f(child, NH)} 
 
 Answer is min{F(0, H), f(0, NH)}
 
