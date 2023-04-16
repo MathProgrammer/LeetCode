@@ -1,0 +1,27 @@
+Calculate the number of ones in each row. 
+Choose the row with the highest count 
+
+------
+
+class Solution {
+public:
+    vector<int> rowAndMaximumOnes(vector<vector<int>>& mat) {
+        vector <int> answer(2, 0);
+        for(int i = 0; i < mat.size(); i++)
+        {
+            int ones_here = 0;
+            for(int j = 0; j < mat[i].size(); j++)
+            {
+                ones_here += (mat[i][j] == 1);
+            }
+            
+            if(ones_here > answer[1])
+            {
+                answer[0] = i;
+                answer[1] = ones_here;
+            }
+        }
+        
+        return answer;
+    }
+};
