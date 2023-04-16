@@ -1,0 +1,152 @@
+First of all, let us count the contribution of every vertex to the final answer. 
+If a vertex V lies in T trips, it is counted T times. 
+It's contribution is T x P[v]
+
+Let us count T for all vertices. 
+
+Let us break down the path from u -> v as 
+
+1. u -> L 
+2. L -> v 
+
+where L = LCA(u, v) 
+
+We can go along this path and increment the contribution of every vertex by one since n = 50 is small. 
+
+------
+
+   vector <int> contribution(n + 1);
+    for(int i = 0; i < trips.size(); i++)
+    {
+        int start = trips[i][0], end = trips[i][1];
+        int lca = find_lca(start, end, depth, parent);
+        
+        mark(start, lca, parent, contribution);
+        mark(end, lca, parent, contribution);
+        contribution[lca]--;
+    }
+
+    void mark(int v, int target, vector <vector <int> > &parent, vector <int> &contribution)
+    {
+        contribution[v]++;
+        
+        if(v == target)
+        {
+            return;
+        }
+        
+        mark(parent[v][0], target, parent, contribution);
+    }
+    
+------
+
+Now, let us find the minimum cost of every subtree. 
+There are two choices for every vertex - Either we half the price or we do not. 
+If we half the price of any vertex, we cannot half any of it's children. 
+If we do not half the price of a vertex, we can either half or not half each of it's children. 
+
+Let f(v, H) and f(v, NH) represent the minimum contribution of the subtree rooted at v when it is halved and not halved respectively 
+
+f(v, H) = sum f(child, NH)
+f(v, NH) = sum max{f(child, H), f(child, NH)} 
+
+Answer is min{F(0, H), f(0, NH)}
+
+-----
+
+void dfs_minimum(int v, int parent_v, vector <vector <int> > &T, vector <int> &price, vector <int> &contribution, vector <vector <int> > &answer)
+    {
+        const int HALVING_HERE = 0, NOT_HALVING_HERE = 1;
+        int cost_in_not_halving_children = 0, best_cost_in_children = 0;
+        
+        for(int child_v : T[v])
+        {
+            if(child_v == parent_v)
+            {
+                continue;
+            }
+            
+            dfs_minimum(child_v, v, T, price, contribution, answer);
+            
+            cost_in_not_halving_children += answer[child_v][NOT_HALVING_HERE];
+            best_cost_in_children += min(answer[child_v][HALVING_HERE], answer[child_v][NOT_HALVING_HERE]);
+        }
+        
+        
+        answer[v][NOT_HALVING_HERE] = contribution[v]*price[v] + best_cost_in_children;
+        answer[v][HALVING_HERE] = contribution[v]*(price[v]/2) + cost_in_not_halving_children;
+    }
+   
+------
+
+I have found LCA in O(log n) time by precomputing a sparse table of the 2^i -th ancestor for each vertex. 
+This precomputation takes O(n log n) time. 
+
+1. Bring both u and v to the same depth by binary lifting 
+2. Keep lifting u and v to their 2^i-th ancestor, if their 2^i-th ancestor is not equal 
+
+    int find_lca(int u, int v, vector <int> &D, vector <vector <int> > &parent)
+    {
+        if(D[u] > D[v])
+        {
+            swap(u, v);
+        }
+        
+        int difference = D[v] - D[u];
+        const int MAX_BITS = 6;
+        for(int bit = MAX_BITS - 1; bit >= 0; bit--)
+        {
+            if(is_bit_set(difference, bit))
+            {
+                v = parent[v][bit];
+            }
+        } //cout << "After lifting u = " << u << " D = " << D[u] << " v = " << v << " D = " << D[v] << "\n";
+        
+        if(u == v)
+        {
+            return v;
+        }
+        
+        for(int bit = MAX_BITS - 1; bit >= 0; bit--)
+        {
+            if(parent[u][bit] != parent[v][bit])
+            {
+                u = parent[u][bit];
+                v = parent[v][bit];
+            }
+        }
+        
+        return parent[v][0];
+    }
+    
+------
+
+Precompute the parent table like this 
+
+    void dfs(int v, int parent_v, vector <vector <int> > &T, vector <vector <int> > &parent, vector <int> &D)
+    {
+        parent[v][0] = parent_v;
+        D[v] = D[parent_v] + 1;
+        
+        for(int child_v : T[v])
+        {
+            if(child_v == parent_v)
+            {
+                continue;
+            }
+            
+            dfs(child_v, v, T, parent, D);
+        }
+    }
+    
+    void compute(vector <vector <int> > &parent, int max_log)
+    {
+        for(int l = 1; l < max_log; l++)
+        {
+            for(int v = 1; v < parent.size(); v++)
+            {
+                int previous_parent = parent[v][l - 1];
+                parent[v][l] = parent[previous_parent][l - 1];
+            }
+        }
+    }
