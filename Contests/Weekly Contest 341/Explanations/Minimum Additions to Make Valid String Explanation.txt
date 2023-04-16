@@ -1,0 +1,32 @@
+Let us keep an expected string "abc"
+
+If we are at position i of the final string, we expect i (mod 3) of the expected string. 
+
+Keep a pointer i for the given word, if the expected matches with word move to the next position. 
+
+We will finish only when i has traversed the whole word and the last letter is c (or the full expected block is over) - whichever comes last. 
+
+------
+
+class Solution {
+public:
+    int addMinimum(string word) {
+        string expected = "abc";
+        string final_word; 
+        for(int i = 0, j = 0; i < word.size() || j != 0; j = (j + 1)%3)
+        {
+            if(i < word.size() && word[i] == expected[j])
+            {
+                final_word += word[i];
+                i++;
+            }
+            else 
+            {
+                final_word += expected[j];
+            }
+        }
+        
+        return final_word.size() - word.size();
+    }
+};
+
