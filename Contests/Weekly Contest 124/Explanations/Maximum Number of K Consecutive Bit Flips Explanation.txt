@@ -13,6 +13,8 @@ A[i] = A[i] + Flips_here[i] (mod 2)
 
 -----
 
+If A[i] = 0, then we can make a new flip at [i, i + k - 1] 
+
 
 -----
 
@@ -25,6 +27,7 @@ public:
         {
             if(i > 0)
             {
+                //We are adding flips_starting[i - 1] because it was not counted in flips_here[i - 1] so has to be added differently
                 flips_here[i] = flips_here[i - 1] + flip_starting[i - 1] - flip_ending[i - 1];
                 nums[i] = (nums[i] + flips_here[i])%2; 
                 
