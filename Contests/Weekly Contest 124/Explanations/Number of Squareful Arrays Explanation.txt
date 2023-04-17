@@ -1,0 +1,94 @@
+Let f(m, i) be the number of good permutations of the array represented by the bitmask m, ending with A[i] 
+
+It is important to keep track of the last element of the permutation. 
+
+m represents those elements, who's indices are set in the binary represenation of m 
+
+What is the transition ? 
+
+f(m, i) = sum(f(m XOR 2^i, j))
+
+For all j, where 
+
+1. j is set in m 
+2. A[i] + A[j] is a perfect square. 
+
+It is often a common idea to fix the last element and then iterate over permutations with a bitmask. 
+It is used in the travelling salesman problem
+
+------
+
+We have counted the number of ways to permute the indices to get a good array but the problem asks us not to count an array twice if it 
+results in the same array. 
+
+We can do this by dividing by the factorials of all the frequencies similar to multinomial coefficient. 
+
+Suppose an integer x, occurs F[x] times, we can permute these F[x] occurrences in F[x]! ways and get the same array.
+
+The number of arrays overcounted is F[A[1]]! x F[A[2]]! X .... X F[A[k]] ! 
+
+where A[1], A[2] , ... , A[k] are the distinct elements of the array. 
+
+------
+
+int numSquarefulPerms(vector<int>& nums) {
+        int max_mask = (1 << nums.size());
+        vector <vector <int> > good_permutations(max_mask, vector <int> (nums.size()));
+
+        for(int m = 0; m < max_mask; m++)
+        {
+            for(int last_bit = 0; last_bit < nums.size(); last_bit++)
+            {
+                for(int second_last_bit = 0; second_last_bit < nums.size(); second_last_bit++)
+                {
+                    if(!is_set_bit(m, last_bit) 
+                    || !is_set_bit(m, second_last_bit) 
+                    || last_bit == second_last_bit 
+                    || !is_square(nums[last_bit] + nums[second_last_bit]))
+                    {
+                        continue;
+                    }
+                    
+                    int m_without_last = m^(1 << last_bit);
+
+                    if( (1 << last_bit) + (1 << second_last_bit) == m )
+                    {
+                        good_permutations[m][last_bit] = 1;
+                    }
+                    else
+                    {
+                        good_permutations[m][last_bit] += good_permutations[m_without_last][second_last_bit];
+                    }
+                    //cout << "S = " << nums[last_bit] + nums[second_last_bit] << " F(" << m << "," << last_bit <<") = " << good_permutations[m][last_bit] << "\n";
+                }
+            }
+        }
+
+
+-------
+
+Use binary search to check if n is a perfect square. 
+Maintain the invariant that L^2 <= n < R^2 at every step
+
+When R - L = 1, N is a perfect square only if L^2 = N
+
+ int is_square(int n)
+  {
+      //L^2 <= n < R^2
+      long long left = 0, right = 1e5;
+      while(right - left > 1)
+      {
+          long long mid = (right + left)/2;
+
+          if(mid*mid <= n)
+          {
+              left = mid;
+          }
+          else 
+          {
+              right = mid;
+          }
+      }
+
+      return (left*left == n);
+  }
