@@ -1,0 +1,77 @@
+The GCD of the array is invariant 
+
+gcd(a, b) = gcd(a, gcd(a, b)) 
+
+If the gcd of the array is not 1, it is not possible to make all elements equal to 1
+
+------
+
+Notice that if there is one 1, we can use it to make it's neighbour 1 
+
+If there are F 1's, we can convert all the elements to 1 in N - F steps
+
+-----
+
+Otherwise, suppose we take P steps to create the first 1, we can then convert the rest of the array to 1's in (N - 1) more steps
+So the answer = P + (N - 1) 
+
+How to find P ? 
+
+P - 1 = is the smallest subarray who's gcd is 1
+If we find any subarray who's GCD is 1, we can keep finding the pairwise GCD 
+(A[i], A[i + 1]) (A[i + 1], A[i + 2]), (A[i + 2], A[i + 3]), ... (A[n - 1], A[n])
+
+We can find out the smallest coprime array by brute force. 
+If the constraints were bigger we could use a range data structure like sparse table or segment tree and then binary search on it 
+
+-----
+
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+        int frequency_1 = 0;
+        int g = 0;
+        for(int n : nums)
+        {
+            g = __gcd(g, n);
+            frequency_1 += (n == 1);
+        }
+        
+        if(g != 1)
+        {
+            return -1;
+        }
+        
+        if(frequency_1 > 0)
+        {
+            return nums.size() - frequency_1;
+        }
+        
+        int smallest_coprime_array = nums.size();
+        vector <vector <int> > gcd(nums.size() + 1, vector <int> (nums.size() + 1));
+        for(int length = 2; length <= nums.size(); length++)
+        {
+            for(int left = 0, right = left + length - 1; right < nums.size(); left++, right++)
+            {
+                if(length == 2)
+                {
+                    gcd[left][right] = __gcd(nums[left], nums[right]);
+                }
+                else 
+                { 
+                    gcd[left][right] = __gcd(nums[left], gcd[left + 1][right]);
+                }
+                
+                if(gcd[left][right] == 1)
+                {
+                    smallest_coprime_array = min(smallest_coprime_array, length);
+                    
+                }
+            }
+        }
+        
+        int creating_first_1 = smallest_coprime_array - 1; cout << "S = " << smallest_coprime_array << "\n";
+        int answer = nums.size() - 1 + creating_first_1;
+        return answer;
+    }
+};
