@@ -1,0 +1,52 @@
+If the gcd of a sequence is g, then the sequence consists only of g's multiples. 
+
+The gcd of a sequence cannot increase by adding a new integer to it. 
+
+The minimum gcd of a sequence consisting of the multiples of g is g. 
+
+------
+
+With these 3 facts in mind, it is enough to check the subsequence consisting of all the multiples of g 
+And see if g is it's gcd. 
+
+If the gcd of all the multiples of g is greater than g, then there is no subsequence who's gcd is g. 
+
+If there is even one pair with gcd g, the gcd of the whole subsequence will be g. 
+
+Therefore it is enough to check the subsequence of all the multiples of g. 
+
+-----
+
+class Solution {
+public:
+    int countDifferentSubsequenceGCDs(vector<int>& nums) 
+    {
+        const int MAX_N = 2e5 + 5;
+        vector <int> subsequence_gcd_for_multiples_of(MAX_N);
+        for(int n : nums)
+        {
+            for(int i = 1; i*i <= n; i++)
+            {
+                if(n%i == 0)
+                {
+                    int factor_1 = i, factor_2 = n/i;
+
+                    subsequence_gcd_for_multiples_of[factor_1] = __gcd(n, subsequence_gcd_for_multiples_of[factor_1]);
+
+                    subsequence_gcd_for_multiples_of[factor_2] = __gcd(n, subsequence_gcd_for_multiples_of[factor_2]);
+                }
+            }
+        }
+
+        int subsequence_gcd = 0;
+        for(int i = 1; i < MAX_N; i++)
+        {
+            if(subsequence_gcd_for_multiples_of[i] == i)
+            {
+                subsequence_gcd++;
+            }
+        }
+
+        return subsequence_gcd;
+    }
+};
