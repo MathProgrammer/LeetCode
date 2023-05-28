@@ -48,12 +48,20 @@ We also need some suffix (possibly of length 0).
 
 For a given L, how do we find R ? 
 
-R is the last removed index, which means T[R + 1, |T|] is contained. 
+R is the last removed index, which means T[R + 1, |T|] is contained in S. 
 
-We will binary search the latest_beginning_for_suffix array in [earliest_end_for_prefix(i), n] for 
+R should satisfy these properties - 
 
-1. The first integer > L 
-2. 
+1. latest_beginning_for_suffix[R + 1] > earliest_end_for_prefix[L - 1]
+2. R > L
+
+We need the largest suffix of T that occurs in S after the prefix of [1, L - 1]
+
+We will binary search the latest_beginning_for_suffix array 
+
+1. In the range [L + 1, |T|] -> This ensures suffix begins after [1, L - 1]
+2. latest_beginning_for_suffix[R] > earliest_end_for_prefix[L - 1] -> This ensures that T[1, L - 1] ends before T[R + 1, |T|] begins. 
+3. It is the smallest such R which satisfies these properties -> This maximizes the length of the suffix. 
 
 We will also do a similar thing by fixing every R and finding the best L
 
