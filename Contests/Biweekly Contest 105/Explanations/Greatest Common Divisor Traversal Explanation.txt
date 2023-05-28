@@ -7,6 +7,9 @@ All integers with some prime factor p1 in common are connected.
 
 If there is some integer with multiple primes p1 and p2 as it's factors, it can be used to connect any multiple of p1 with any multiple of p2. 
 
+Two integers (x, y) are disconnected if there is no path from any of the prime factors of x to any of the prime factors of y. 
+If even one pair of prime factors are connected, there is a path between them. 
+
 Therefore, it is enough to only think of the prime factors and check if they are connected. 
 
 The graph is quite beautiful. 
