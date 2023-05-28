@@ -12,13 +12,15 @@ We will insert elements into the matrix in descending order.
 This maintains the invariant that when G(r, c) is inserted, the matrix only has larger elements.
 
 Let us also keep track of the maximum value of f(r, c) for each row and column. 
+Let R(r) be the maximum value of f(r, c) over all cells in row r. 
+Let C(c) be the maximum value of f(r, c) over all cells in column c. 
 
-f(r, c) = 1 + max{row_max(r), column_max(c)}
+f(r, c) = 1 + max{R(r), C(c)}
 
 And then, update row_max, and column_max 
 
-row_max(r) = max{row_max(r), f(r, c)}
-column_max(c) = max{column_max(c), f(r, c)}
+R(r) = max{R(r), f(r, c)}
+C(c) = max{C(c), f(r, c)}
 
 -----
 
