@@ -5,18 +5,27 @@ Answer = min(prefix_cost[i][bit], sufix_cost[i + 1][bit]}
 
 -----
 
+Now, let us discuss how to find prefix_cost[i][bit]. 
+We have to do a similar thing for suffix_cost[i][bit]. 
+
+If S(i) = bit, then 
+
+prefix_cost[i][bit] = prefix_cost[i - 1][bit] because we just have to make [1, i - 1] to bit. 
+
+If S(i) =/= bit, then 
+
+We will have to flip the prefix of [1, i] to make S[i] = bit. 
+
+In order to make the whole prefix = bit, we need the whole string to be equal to (bit^1) before doing the flip. 
+
+prefix_cost[i][bit] = (i + 1) + prefix_cost[i - 1]][bit^1]
+
 ------
+
 
 class Solution {
 public:
     long long minimumCost(string S) {
-        
-        vector <int> last_different(S.size());
-        last_different[0] = -1;
-        for(int i = 1; i < S.size(); i++)
-        {
-            last_different[i] = (S[i] != S[i - 1] ? i - 1: last_different[i - 1]);
-        }
         
         vector <vector <long long> > prefix_cost(S.size(), vector <long long> (2, 0));
         for(int i = 0; i < S.size(); i++)
@@ -29,23 +38,9 @@ public:
                 }
                 else 
                 {
-                    prefix_cost[i][bit] = (i + 1);
-                    
-                    if(last_different[i] != -1)
-                    {
-                        prefix_cost[i][bit] += prefix_cost[last_different[i]][bit^1];
-                    }
+                    prefix_cost[i][bit] = (i + 1) + (i == 0 ? 0 : prefix_cost[i - 1][bit^1]);
                 }
-                
-                 //cout << "Prefix COst " << i << "," << bit << " = " << prefix_cost[i][bit] << "\n";
             }
-        }
-        
-        vector <int> next_different(S.size());
-        next_different[S.size() - 1] = S.size(); 
-        for(int i = S.size() - 2; i >= 0; i--)
-        {
-            next_different[i] = (S[i] != S[i + 1] ? i + 1 : next_different[i + 1]);
         }
         
         vector <vector <long long> > suffix_cost(S.size(), vector <long long> (2, 0));
@@ -59,15 +54,8 @@ public:
                 }
                 else 
                 {
-                    suffix_cost[i][bit] = (S.size() - i);
-                    
-                    if(next_different[i] != S.size())
-                    {
-                        suffix_cost[i][bit] += suffix_cost[next_different[i]][bit^1];
-                    }
+                    suffix_cost[i][bit] = (S.size() - i) + (i == S.size() - 1 ? 0 : suffix_cost[i + 1][bit^1]);
                 }
-                
-                //cout << "Suffix COst " << i << "," << bit << " = " << suffix_cost[i][bit] << "\n";
             }
         }
         
