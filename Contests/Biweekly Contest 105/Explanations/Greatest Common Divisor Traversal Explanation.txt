@@ -10,7 +10,8 @@ If there is some integer with multiple primes p1 and p2 as it's factors, it can 
 Two integers (x, y) are disconnected if there is no path from any of the prime factors of x to any of the prime factors of y. 
 If even one pair of prime factors are connected, there is a path between them. 
 
-Therefore, it is enough to only think of the prime factors and check if they are connected. 
+Therefore, it is necessary and sufficient to check if every pair of prime factors are connected. 
+The answer is true if and only if the graph is one connected component. 
 
 The graph is quite beautiful. 
 
