@@ -98,30 +98,21 @@ Transition -
 f(S, d) = sum(f(S - last_digit, d - 1)) , where 0 <= last_digit <= 9
 
 void precompute(vector <vector <int> > &no_of_ways, int mod, int sum, int no_of_digits)
+{
+    no_of_ways[0][0] = 1;
+
+    for(int s = 0; s <= sum; s++)
     {
-        for(int s = 0; s <= sum; s++)
+        for(int d = 1; d <= no_of_digits; d++)
         {
-            for(int d = 0; d <= no_of_digits; d++)
+            for(int last_digit = 0; last_digit <= min(s, 9); last_digit++)
             {
-                for(int last_digit = 0; last_digit <= min(s, 9); last_digit++)
-                {
-                    if(d == 0)
-                    {
-                        no_of_ways[s][d] = (s == 0);
-                    }
-                    else if(d == 1)
-                    {
-                        no_of_ways[s][d] = (s <= 9);
-                    }
-                    else 
-                    {
-                        no_of_ways[s][d] += no_of_ways[s - last_digit][d - 1];
-                        no_of_ways[s][d] %= mod;
-                    }
-                }
+                no_of_ways[s][d] += no_of_ways[s - last_digit][d - 1];
+                no_of_ways[s][d] %= mod;
             }
         }
     }
+}
     
 ------
 
