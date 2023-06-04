@@ -1,0 +1,31 @@
+Let L be the index of 1 and R be the index of n. 
+
+The number of moves is (L - 1) to bring 1 to the beginning. 
+The number of moves is (n - R) to bring n to the end. 
+
+There is only one additional consideration. 
+
+If R < L, then there will be one swap, which will impact both 1 and n, 
+So, it will be counted two times. 
+
+------
+
+class Solution {
+public:
+    int semiOrderedPermutation(vector<int>& nums) {
+        vector <int> index(nums.size() + 1); 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            index[nums[i]] = i;
+        }
+        
+        int n = nums.size();
+        int moves = (index[1] - 0) + (n - 1 - index[n]);
+        if(index[n] < index[1])
+        {
+            moves--;
+        }
+        
+        return moves;
+    }
+};
