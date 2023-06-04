@@ -8,6 +8,25 @@ If T1 < T2, then matrix[r][c] will be impacted by the column C operation last.
 
 ------
 
+Let us process queries from latest to newest. 
+
+First, let us check if we have already seen this row or column. 
+If yes, then this is not the latest update so we can ignore it. 
+
+Otherwise. let this be the last update for this row R. 
+Then, every cell of this row will become = value ? 
+Not exactly. There would be some cells (R, C) such that their column C had already been updated. 
+So, every cell other than those who's column is already updated will be updated to vaue. 
+
+We can keep track of the number of finalised columns. 
+
+(n - finalised_columns) cells become = value in this row R. 
+The sum increases by (n - finalised columns) x value 
+
+We do a symmetric thing for column queries. 
+
+-----
+
 class Solution {
 public:
     long long matrixSumQueries(int n, vector<vector<int>>& queries) 
