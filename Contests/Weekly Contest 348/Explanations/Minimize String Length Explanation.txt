@@ -1,0 +1,19 @@
+The final string will only have one occurence of each character. 
+If any character occurs more than once, then we can perform the operation and reduce the frequency by 2 or 1. 
+
+So, we will have to count the number of distinct characters in the string. 
+
+------
+
+class Solution {
+public:
+    int minimizedStringLength(string S) {
+        set <char> distinct; 
+        for(char ch : S)
+        {
+            distinct.insert(ch);
+        }
+        
+        return distinct.size();
+    }
+};
