@@ -1,0 +1,51 @@
+Let us be greedy. 
+Find the first element on the left which is not 0. 
+We have to do at least nums[i] operations on here. 
+So perform nums[i] operations on the segment [i, i + k - 1]
+
+----
+
+We don't have to actually update every segment as that would be O(n) for each segment. 
+Let us keep track of the number of operations impacting every element. 
+
+We will maintain two auxiliary arrays - operations_starting and operations_ending 
+
+operations[i] = operations[i - 1] + operations_starting[i] - operations_ending[i]
+
+-----
+
+While doing this, we should check that no element goes below 0 or above 0
+
+nums[i] != operations[i]
+
+-----
+
+class Solution {
+public:
+    bool checkArray(vector<int>& nums, int k) {
+        int no_of_elements = nums.size();
+        vector <int> operations_starting(no_of_elements), operations_ending(no_of_elements), operations(no_of_elements);
+        for(int i = 0; i < no_of_elements; i++)
+        {
+            if(i > 0)
+            {
+                operations[i] = operations[i - 1] + operations_starting[i] - operations_ending[i - 1];
+            }
+            
+            if(i + k - 1 <= no_of_elements - 1)
+            {
+                int extra = max(0, nums[i] - operations[i]);
+            
+                operations_starting[i] += extra; 
+                operations_ending[min(i + k - 1, no_of_elements - 1)] += extra;
+                operations[i] += extra;
+            }
+          
+            if(operations[i] != nums[i])
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }   
