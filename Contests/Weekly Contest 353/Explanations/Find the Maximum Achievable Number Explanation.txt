@@ -1,0 +1,12 @@
+Num increases t times and x reduces t times. 
+
+So x = Num + 2t
+
+-----
+
+class Solution {
+public:
+    int theMaximumAchievableX(int num, int t) {
+        return num + 2*t;
+    }
+};
