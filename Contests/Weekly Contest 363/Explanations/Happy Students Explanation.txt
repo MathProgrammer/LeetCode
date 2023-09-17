@@ -1,0 +1,60 @@
+Let us sort the students by their preference. 
+
+Insight - A valid selection will always be some complete prefix of this sorted array 
+
+Proof - 
+
+Suppose we choose the i-th student. 
+
+Then, we must choose every student j, such that j < i 
+
+The reason is nums[j] < nums[i] 
+
+If j is not chosen, the number of students selected must be lesser than nums[j]. 
+
+And if i is chosen, the number of students must be greater than nums[i]
+
+Since nums[j] <= nums[i], any selection that contains i, must necessarily contain j. 
+
+-----
+
+How to check if a prefix is a valid selection ? 
+
+A prefix of length i is valid if 
+
+nums[i] <= prefix < nums[i + 1]
+
+This way we satisfy the condition of every element from [1, i] as well as [i + 1, n]
+
+-----
+
+There are two boundary conditions - 
+
+1. Choosing no element - 
+
+This can be done if 0 < nums[0] 
+
+2. Choosing all elements - 
+
+This can be done if nums[n - 1] < n
+
+-----
+
+class Solution {
+public:
+    int countWays(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        
+        int answer = (0 < nums[0]) + (nums.back() < nums.size());
+        for(int i = 0; i + 1 < nums.size(); i++)
+        {   
+            int prefix = i + 1;
+            if(nums[i] < prefix && prefix < nums[i + 1])
+            {
+                answer++;
+            }
+        }
+        
+        return answer;
+    }
+};
