@@ -1,0 +1,79 @@
+Suppose N = p1^a1 p2^a2 ... pk ^ak 
+
+Let us call the 'normal form' of N the squarefree form of N = q1 q2 ... qm 
+
+Where q1, q2, ... qm are all the prime factors of N that have an odd exponent in N. 
+
+-----
+
+If P x Q is a perfect square, then P and Q must have the same normal form. 
+
+Proof - Every prime factor in the product has an even exponent. 
+
+This means that a prime factor either has an even exponent in both P and Q or an odd exponent in both P and Q
+
+In either situation, p will be represented exactly 0 or 1 time in both P and Q's normal forms. 
+
+-----
+
+This means that any two array values who's index has the same normal form will form a complete subset. 
+
+Conversely, if two integers have a different normal form, their product cannot be a perfect square since 
+at least one prime occurs an odd number of times in P and even number of times in Q
+
+-----
+
+We can precompute the normal form of all integers using a sieve. 
+
+Then, we can find the sum of all array values who's indices have the same normal form. 
+
+----
+
+void sieve(int N, vector <int> &normal_form)
+    {
+        vector <int> largest_prime_factor(N, 0);
+        normal_form[1] = 1;
+        for(int i = 2; i < N; i++)
+        {
+            if(largest_prime_factor[i] == 0)
+            {
+                for(int multiple = i; multiple < N; multiple += i)
+                {
+                    largest_prime_factor[multiple] = i;
+                }
+            }
+            
+            int i_without_largest_prime = i, largest_prime_exponent = 0;
+            while(i_without_largest_prime%largest_prime_factor[i] == 0)
+            {
+                i_without_largest_prime /= largest_prime_factor[i];
+                largest_prime_exponent++;
+            }
+            
+            normal_form[i] = (largest_prime_exponent%2 == 0 ? 1 : largest_prime_factor[i])*normal_form[i_without_largest_prime];
+        }
+    }
+
+------
+
+We can then find the sum of all array elements who's indices have the same normal form. 
+
+long long maximumSum(vector<int>& nums) {
+        
+        const int MAX_N = 1e4 + 5;
+        vector <int> normal_form(MAX_N);
+        sieve(MAX_N, normal_form);
+        
+        long long answer = 0;
+        vector <long long> sum_for_subset(MAX_N);
+        for(int i = 0, index = 1; i < nums.size(); i++, index++)
+        {
+            int this_normal_form = normal_form[index];
+            
+            sum_for_subset[this_normal_form] += nums[i];
+            
+            answer = max(answer, sum_for_subset[this_normal_form]);
+        }
+        
+        return answer;
+    }
