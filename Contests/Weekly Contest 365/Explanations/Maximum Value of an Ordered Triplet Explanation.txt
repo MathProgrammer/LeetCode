@@ -1,0 +1,54 @@
+We can use the below approach for both A and B since the time complexity is O(N). 
+
+The trick to solving problems which ask us for triplets or tuples is to fix the middle element of the triplet. 
+This gives us an easy way to find the maxima or minima of the search space. 
+
+We are trying to maximize the product of (Nums[i] - Nums[j]) x (Nums[k]) for a fixed j. 
+
+In order to maximize the product, we have to maximize both indiviual components of the product. 
+
+Nums[k] clearly has to be the suffix maximum. 
+
+In order for Nums[i] - Nums[j] to be maximized, Nums[i] has to be the largest in the prefix. 
+
+For a given j, the maximum value triplet is (Prefix_max - Nums[j]) x Suffix_max 
+
+------
+
+Precompute prefix and suffix max and find the maximum value for each j. 
+
+Choose the best j for the answer. 
+
+-----
+
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class Solution {
+public:
+    long long maximumTripletValue(vector<int>& A) {
+        int no_of_elements = A.size();
+        vector <int> prefix_max(no_of_elements);
+        prefix_max[0] = A[0];
+        for(int i = 1; i < no_of_elements; i++)
+        {
+            prefix_max[i] = max(prefix_max[i - 1], A[i]);
+        }
+
+        vector <int> suffix_max(no_of_elements + 1);
+        for(int i = no_of_elements - 1; i >= 0; i--)
+        {
+            suffix_max[i] = max(suffix_max[i + 1], A[i]);
+        }
+
+        long long answer = 0;
+        for(int j = 1; j <= no_of_elements - 2; j++)
+        {
+            long long best_answer_with_this_j = (prefix_max[j - 1] - A[j])*1LL*suffix_max[j + 1];
+            answer = max(answer, best_answer_with_this_j);
+        }
+
+        return answer;
+    }
+};
