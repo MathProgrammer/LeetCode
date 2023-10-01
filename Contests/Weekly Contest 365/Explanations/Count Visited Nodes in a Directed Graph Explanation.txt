@@ -1,0 +1,117 @@
+This is a functional graph. Every vertex has outdegree exactly 1. 
+
+The structure of the graph is such that each component is a cycle with some (possibly 0) chains leading into the cycle. 
+
+Every component has exactly 1 cycle. (Since a component of C vertices has C edges, it can only have 1 cycle).
+
+1. If a vertex is in a cycle of length L, it's answer is L. 
+2. If a vertex is not in a cycle, it's answer is d + L, 
+where d is the distance to a cycle in it's component and L is the length of the cycle. 
+
+-----
+
+We can handle each component separately. 
+
+Let us choose a vertex of any unvisited component. 
+
+1. Perform DFS from V and find the first vertex C that we have visited twice. C is on the cycle for sure. 
+2. Perform DFS from C to visit the whole cycle. Calculate the length of the cycle. 
+This also gives us the answer for every vertex on the cycle. 
+3. In order to find the distance of the other vertices from the cycle, perform multi-source BFS from the cycle on the reverse graph.
+Build a graph where
+a. The directions of the edges are reverse 
+b. It only has edges where at least one of the vertices is not on the cycle. (This prevents loops while doing BFS). 
+
+This will give us the distance of the non-cycle vertices from the cycle.
+
+-----
+
+The overall time complexity is O(n) since each vertex is touched at most these many times -  
+
+1. While checking if it is part of a visited component. 
+2. Doing DFS on the way to a cycle. 
+3. Doing DFS to calculate the cycle length 
+4. Building the reverse graph (excluding edges in the cycle)
+5. Multi Source BFS from the cycle on the reverse graph
+
+-----
+
+class Solution {
+public:
+    int dfs_cycle(int v, vector <int> &E, vector <int> &visited)
+    {
+        if(visited[v])
+        {
+            return v;
+        }
+
+        visited[v] = true;
+
+        return dfs_cycle(E[v], E, visited);
+    }
+
+    vector<int> countVisitedNodes(vector<int>& edges) {
+        int no_of_vertices = edges.size();
+
+        vector <int> visited(no_of_vertices, false);
+        vector <int> on_cycle(no_of_vertices, false);
+        vector <int> answer(no_of_vertices);
+        for(int i = 0; i < no_of_vertices; i++)
+        {
+            if(answer[i] > 0)
+            {
+                continue;
+            }
+
+            int current_component_cycle_start = dfs_cycle(i, edges, visited);
+            int v = current_component_cycle_start;
+            int current_v = edges[v];
+            int cycle_size = 1;
+            while(current_v != v)
+            {
+                current_v = edges[current_v];
+                cycle_size++;
+            }
+
+            queue <int> Q;
+            Q.push(v);
+            answer[v] = cycle_size;
+            on_cycle[v] = true;
+            current_v = edges[v];
+            while(current_v != v)
+            {
+                answer[current_v] = cycle_size;
+                on_cycle[current_v] = true;
+                Q.push(current_v);
+
+                current_v = edges[current_v];
+            }
+
+            vector <vector <int>> reverse_edges(no_of_vertices);
+            for(int i = 0; i < edges.size(); i++)
+            {
+                int target = edges[i];
+
+                if(!on_cycle[i])
+                {
+                    reverse_edges[target].push_back(i);
+                }
+            }
+
+            while(!Q.empty())
+            {
+                int v = Q.front();
+                Q.pop();
+
+                for(int child_v : reverse_edges[v])
+                {
+                    answer[child_v] = answer[v] + 1;
+                    Q.push(child_v);
+                }
+            }
+        }
+
+
+        return answer;
+    }
+};
