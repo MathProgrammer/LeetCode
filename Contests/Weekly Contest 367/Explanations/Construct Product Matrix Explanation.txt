@@ -1,0 +1,78 @@
+Let us compute the product and suffix of every row 
+
+row_prefix_product(i, j) is the product of [1, j) of the i-th row. 
+row_suffix_product(i, j) is the product of (j, n] of the i-th row. 
+
+Another thing is that 
+
+entire_product_prefix[i] is the product of the first i rows. 
+entire_product_suffix[i] is the product of the suffix [i, n] rows. 
+
+Answer(i, j) is the product of 
+
+1. Product of first (i - 1) rows 
+2. Product of suffix (i, n] rows 
+3. Product of the suffix of [1, j) in the i-th row 
+4. Product of the suffix of (j, n] in the i-th row
+
+-----
+
+Another way of doing this is to flatten the matrix into an array and then compute the simple prefix and suffix of the array. 
+
+------
+
+class Solution {
+public:
+    vector<vector<int>> constructProductMatrix(vector<vector<int>>& grid) {
+        
+        const int MOD = 12345;
+        int rows = grid.size(), columns = grid[0].size(); 
+        vector <vector <long long> > row_prefix_product(rows, vector <long long> (columns, 1)), row_suffix_product(rows, vector <long long> (columns, 1));
+        for(int r = 0; r < rows; r++)
+        {
+            for(int c = 1; c < columns; c++)
+            {
+                row_prefix_product[r][c] = grid[r][c - 1]*row_prefix_product[r][c - 1]; 
+                row_prefix_product[r][c] %= MOD;
+            }
+            
+            for(int c = columns - 2; c >= 0; c--)
+            {
+                row_suffix_product[r][c] = grid[r][c + 1]*row_suffix_product[r][c + 1]; 
+                row_suffix_product[r][c] %= MOD;
+            }
+        }
+        
+        vector <long long> entire_product_prefix(rows, 1), entire_product_suffix(rows, 1); 
+        for(int r = 0; r < rows; r++)
+        {
+            int product = grid[r][columns - 1]*row_prefix_product[r][columns - 1];
+            entire_product_prefix[r] = (r == 0 ? product : product*entire_product_prefix[r - 1]);
+            entire_product_prefix[r] %= MOD;
+        }
+        
+        for(int r = rows - 1; r >= 0; r--)
+        {
+            int product = grid[r][columns - 1]*row_prefix_product[r][columns - 1];
+            entire_product_suffix[r] = (r == rows - 1 ? product : product*entire_product_suffix[r + 1]);
+            entire_product_suffix[r] %= MOD;
+        }
+        
+        vector <vector <int> > product(rows, vector <int> (columns));
+        for(int r = 0; r < rows; r++)
+        {
+            for(int c = 0; c < columns; c++)
+            {
+                long long before_rows = (r == 0 ? 1 : entire_product_prefix[r - 1]);
+                long long after_rows = (r == rows - 1 ? 1 : entire_product_suffix[r + 1]);
+                
+                long long this_row_product = (row_prefix_product[r][c]*row_suffix_product[r][c])%MOD;
+                long long other_rows_product = (before_rows*after_rows)%MOD;
+                
+                product[r][c] = (this_row_product*other_rows_product)%MOD;
+            }
+        }
+        
+        return product;
+    }
+};
