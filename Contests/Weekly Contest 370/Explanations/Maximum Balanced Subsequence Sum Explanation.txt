@@ -1,0 +1,120 @@
+Let us notice that A[i] can come after A[j] in a subsequence if 
+
+A[i] - A[j] >= i - j 
+A[i] - i >= A[j] - j 
+
+Let us define a new array V such that V[i] = A[i] - i
+
+The given problem is equivalent to finding - 
+1. A non-decreasing subsequence on V 
+2. Summing the corresponding values of A
+
+----
+
+Let us do the following - 
+
+Maintain a new array B. B[v] is the largest sum of a subsequence where the last element has value v
+
+Initially, it is empty. Then, do the following
+
+1. Now, we are processing A[i]. A[i] can only be appended to a subsequence who's last value is <= V[i]
+2. B[V[i]] = A[i] + max{B[v]}, where v <= V[i] 
+
+int largest_sum_ending_here = 0;
+for(int v = min_v; v <= V[i]; v++)
+{
+	largest_sum_ending_here = max(largest_sum_ending_here, B[v] + A[i]);
+}
+
+3. Update B[V[i]] after finding the value 
+Make sure to do the update after finding the maximum B[v_min, V[i]] and not during because 
+it is possible to have equal elements in the subsequence 
+
+B[V[i]] = largest_sum_ending_here
+
+-----
+
+We also have to do coordinate compression to handle negative values while mapping them to indices. 
+
+We can use segment trees to find the range max [v_min, V[i]] in O(log n) time
+
+-----
+
+
+    long long maxBalancedSubsequenceSum(vector<int>& A)
+    {
+        int no_of_elements = A.size();
+        set <int> values;
+        for(int i = 0; i < no_of_elements; i++)
+        {
+            values.insert(A[i] - i);
+        }
+
+        int id = 1;
+        map <int, int> compressed_id;
+        for(int v : values)
+        {
+            compressed_id[v] = id++;
+        }
+
+
+
+        const int oo = 1e9 + 9;
+        long long answer = A[0];
+        vector <long long> max_tree(4* no_of_elements + 5, 0);
+        for(int i = 0; i <  no_of_elements; i++)
+        {
+            int current_value = A[i] - i;
+            int current_id = compressed_id[current_value];
+
+            long long max_sum_ending_here = A[i] + get_max(max_tree, 1, 1, no_of_elements, 1, current_id);
+            update(max_tree, 1, 1, no_of_elements, current_id, max_sum_ending_here);
+
+            answer = max(answer, max_sum_ending_here);
+        }
+
+        return answer;
+    }
+
+-----
+
+Segment Tree functions to return range maximum and perform point updates in O(log N) time each - 
+
+    long long get_max(vector <long long> &tree, int n, int left, int right, int query_left, int query_right)
+    {
+        if(query_right < left || right < query_left || right < left || query_right < query_left)
+        {
+            return 0;
+        }
+
+        if(query_left <= left && right <= query_right)
+        {
+            return tree[n];
+        }
+
+        int mid = (left + right)/2;
+        long long left_max = get_max(tree, LEFT(n), left, mid, query_left, query_right);
+        long long right_max = get_max(tree, RIGHT(n), mid + 1, right, query_left, query_right);
+
+        return max(left_max, right_max);
+    }
+
+    void update(vector <long long> &tree, int n, int left, int right, int position, long long value)
+    {
+        if(position < left || right < position)
+        {
+            return;
+        }
+
+        if(left == right)
+        {
+            tree[n] = max(tree[n], value);
+            return;
+        }
+
+        int mid = (left + right)/2;
+        update(tree, LEFT(n), left, mid, position, value);
+        update(tree, RIGHT(n), mid + 1, right, position, value);
+
+        tree[n] = max(tree[LEFT(n)], tree[RIGHT(n)]);
+    }
