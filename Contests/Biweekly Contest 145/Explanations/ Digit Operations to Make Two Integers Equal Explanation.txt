@@ -1,0 +1,91 @@
+We can do a BFS from N in all directions. 
+The operations do not increase the number of digits so we will 
+visit at most 10^4 vertices. 
+
+It is a weighted graph so we can improve the complexity by using a 
+priority queue (Djikstra) instead of a regular queue. 
+However, it is not important for this problem.
+
+To visit the children of a vertex, I created an array called step - 1, 10, 100, 1000
+and added and subtracted it to the integer, rather than doing any string parsing.
+
+-----
+
+class Solution 
+{
+    public:
+    void sieve(vector <int> &is_prime, int N)
+    {
+        is_prime[0] = is_prime[1] = false;
+        for(int i = 2; i < N; i++)
+        {
+            for(int multiple = 2*i; multiple < N; multiple += i)
+            {
+                is_prime[multiple] = false;
+            }
+        }
+    }
+
+    vector <int> get_children(int n)
+    {
+        int original_n = n;
+        vector <int> children;
+        
+        vector <int> steps = vector <int> {1, 10, 100, 1000};
+        for(int i = 0; i < steps.size() && n > 0; i++)
+        {
+            int digit = n%10; 
+            if(digit != 9)
+            {
+                int adding_step = original_n + steps[i];
+                children.push_back(adding_step);
+            }
+
+            if(digit != 0)
+            {
+                int subtracting_step = original_n - steps[i];
+                children.push_back(subtracting_step);
+            }
+            
+            n /= 10;
+        }
+
+        return children;
+    }
+
+    int minOperations(int n, int m) 
+    {
+        const int MAX_N = 1e4 + 5, oo = 1e9;
+        vector <int> is_prime(MAX_N, true); 
+        sieve(is_prime, MAX_N);
+
+        vector <int> min_cost(MAX_N, oo);
+        queue <int> Q; 
+
+        if(!is_prime[n])
+        {
+            min_cost[n] = n; 
+            Q.push(n); 
+        }
+
+        while(!Q.empty())
+        {
+            int v = Q.front(); 
+            Q.pop(); 
+
+            vector <int> children = get_children(v);
+            for(int child : children)
+            {
+                if(!is_prime[child] && 
+                    min_cost[v] + child < min_cost[child])
+                {
+                    min_cost[child] = min_cost[v] + child;
+                    Q.push(child);
+                }
+            }
+        }
+
+        int answer = (min_cost[m] == oo ? -1 : min_cost[m]);
+        return answer;
+    }
+};

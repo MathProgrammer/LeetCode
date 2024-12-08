@@ -1,0 +1,44 @@
+Let us analyse the operations on an array of distinct values of the given array. 
+All occurences of the number change at the same time so it is okay to only 
+look at distinct occurences. 
+
+The operation does not increase the minimum element of the set. 
+
+Therefore if k > minimum of set, it is not possible. 
+
+If K = minimum of the set, then we have to do the operation N - 1 times. 
+
+If K < minimum, then we have to do the operation N times,
+Use (N - 1) operations to make all elements = minimum of set 
+Use the final operation to make all elements = K 
+
+-----
+
+class Solution 
+{
+    public:
+    int minOperations(vector<int>& nums, int k) 
+    {
+        set <int> S; 
+        for(int n : nums)
+        {
+            S.insert(n);
+        }
+
+        int answer;
+        if(*S.begin() < k)
+        {
+            answer = -1;
+        }
+        else if(*S.begin() == k)
+        {
+            answer = S.size() - 1;
+        }
+        else if(k < *S.begin())
+        {
+            answer = S.size();
+        }
+        
+        return answer;
+    }
+};
