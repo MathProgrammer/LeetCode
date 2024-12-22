@@ -1,0 +1,106 @@
+Let us first observe that this is a monotonic function 
+
+If we can make the string have blocks of size at most N, 
+then we can do the same for N + 1
+
+If the string does not have blocks of size N, 
+it will also not have N - 1
+
+This means that we can binary search it. 
+
+-----
+
+How to check if we can create a string with idential blocks of length at most X ? 
+
+Let us do it in a greedy way. Suppose we find an identical block of length K 
+How many do we have to flip ? 
+
+We can just flip every (X + 1)-th character - This is K/(X + 1) 
+
+If there is only one block of length X + 1, then flip the second last character to avoid increasing the length of the next block. 
+
+----
+
+X = 1 is a special case since there is no second-last character in each block. X = 1 consists of alternating strings, which means
+the final string would either be 1010101.... or 010101... 
+Evaluate the flips needed to reach either of these 2 strings and choose the minimum for the X = 1 case.
+
+-----
+
+class Solution 
+{
+    public:
+    int no_of_operations(string &S, int max_streak)
+    {
+        int operations = 0, streak = 1; 
+        for(int i = 1; i < S.size(); i++)
+        {
+            if(S[i] == S[i - 1])
+            {
+                streak++;
+            }
+
+            if(i == S.size() - 1 || S[i] != S[i - 1])
+            {
+                operations += streak/(max_streak + 1);
+                streak = 1;
+            }
+        }
+
+        return operations;
+    }
+
+    int get_current_max_streak(string &S)
+    {
+        int streak = 1, max_streak = 1;
+        for(int i = 1; i < S.size(); i++)
+        {
+            streak = (S[i] == S[i - 1] ? streak + 1 : 1);
+            max_streak = max(max_streak, streak);
+        }
+
+        return max_streak;
+    }
+
+    int is_alternating_possible(string &S, int max_flips)
+    {
+        int flips_01 = 0; 
+        for(int i = 0; i < S.size(); i++)
+        {
+            flips_01 += (S[i] != i%2 + '0');
+        }
+
+        int flips_10 = 0; 
+        for(int i = 0; i < S.size(); i++)
+        {
+            flips_10 += (S[i] == i%2 + '0');
+        }
+
+        return (min(flips_01, flips_10) <= max_flips);
+    }
+
+    int minLength(string &S, int numOps) 
+    {
+        if(is_alternating_possible(S, numOps))
+        {
+            return 1;
+        }
+        
+        int left = 1, right = get_current_max_streak(S);
+        //L < Answer <= R
+        while(right - left > 1)
+        {
+            int mid = (left + right)/2; 
+            if(no_of_operations(S, mid) <= numOps)
+            {
+                right = mid;
+            }
+            else 
+            {
+                left = mid;
+            }
+        }
+
+        return right;
+    }
+};
