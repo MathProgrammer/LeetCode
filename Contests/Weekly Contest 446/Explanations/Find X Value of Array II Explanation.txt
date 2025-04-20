@@ -1,0 +1,180 @@
+Build a segment tree where each node holds the value of the product (mod K)
+of all elements in it's range. 
+
+We also need to know the prefix frequencies of all the moduli in [0, k] for every node
+K is very small. 
+
+Every node of the tree holds the following information - 
+
+1. The product of elements in it's range. 
+2. The prefix frequency of every modulo k. 
+
+Details of the merging of Nodes are in the Node class. 
+
+-----
+
+
+class Solution 
+{
+    public:
+    vector<int> resultArray(vector<int>& nums, int k, vector<vector<int>>& queries) 
+    {
+        int no_of_elements = nums.size();
+        SegmentTree segmentTree(no_of_elements, k);
+        for(int i = 0; i < no_of_elements; i++)
+        {
+            segmentTree.update(1, 0, no_of_elements - 1, i, nums[i]);
+        }
+
+        vector <int> answer(queries.size());
+        for(int q = 0; q < queries.size(); q++)
+        {
+            int index = queries[q][0], value = queries[q][1], start = queries[q][2], x = queries[q][3];
+
+            nums[index] = value;
+            segmentTree.update(1, 0, no_of_elements - 1, index, nums[index]);
+
+            Node segment = segmentTree.getNode(1, 0, no_of_elements - 1, start, no_of_elements - 1);
+            answer[q] = segment.get_prefix_frequency(x);
+        }
+
+        return answer;
+    }
+};
+
+------
+
+The segment tree will need to support 2 operations - 
+
+1. Update a point 
+2. Get the prefix frequencies of products (mod k) of a given range. 
+
+The logic for obtaining the prefix frequencies is outsourced to the Node class. 
+
+-----
+
+class SegmentTree 
+{
+    private: 
+    vector <Node> tree;
+    int mod;
+    
+    public: 
+    SegmentTree(int n, int k)
+    {
+        mod = k;
+        tree.resize(4*n + 1, Node(mod));
+    }
+
+    Node getNode(int n)
+    {
+        return tree[n];
+    }
+
+    Node getNode(int n, int left, int right, int query_left, int query_right)
+    {
+        if(query_right < left || right < query_left)
+        {
+            return Node(mod);
+        }
+        
+        if(query_left <= left && right <= query_right)
+        {
+            return tree[n];
+        }
+
+        int mid = (left + right)/2; 
+        
+        Node left_node = getNode(LEFT(n), left, mid, query_left, query_right);
+        Node right_node = getNode(RIGHT(n), mid + 1, right, query_left, query_right);
+
+        Node sum = Node(mod); 
+        sum.merge(left_node, right_node); 
+
+        return sum;
+    }
+
+    void update(int n, int left, int right, int position, int value)
+    {
+        if(position < left || right < position)
+        {
+            return;
+        }
+
+        if(left == right)
+        {
+            tree[n] = Node(value, mod);
+            return;
+        }
+
+        int mid = (left + right)/2;
+        update(LEFT(n), left, mid, position, value); 
+        update(RIGHT(n), mid + 1, right, position, value);
+
+        tree[n].merge(tree[LEFT(n)], tree[RIGHT(n)]);
+    }
+};
+
+
+-----
+
+
+I got TLE in this problem because the Node had a vector <int> prefix_frequency instead of an array. 
+Additionally, make sure the empty node has segment product as 1 not 0
+as 1 is the unit element for multiplication. 
+
+Otherwise merging an empty node with a present node, will change the total segment mod incorrectly 
+
+class Node
+{
+    private: 
+    int mod, segment_mod;
+    int prefix_frequency[5];
+
+    public: 
+    Node(int k) 
+    {
+        segment_mod = 1;
+        mod = k;
+        for(int m = 0; m < k; m++)
+        {
+            prefix_frequency[m] = 0;
+        }
+    }
+    
+    Node(int n, int k)
+    {
+        mod = k;
+
+        segment_mod = n%k;
+
+        for(int m = 0; m < k; m++)
+        {
+            prefix_frequency[m] = 0;
+        }
+        prefix_frequency[segment_mod] = 1; 
+    }
+
+    int get_prefix_frequency(int m)
+    {
+        return prefix_frequency[m];
+    }
+
+    void merge(Node left, Node right)
+    {
+        segment_mod = (left.segment_mod*right.segment_mod)%mod;
+        
+        for(int m = 0; m < mod; m++)
+        {
+            prefix_frequency[m] = left.prefix_frequency[m];
+        }
+
+        for(int suffix_m = 0; suffix_m < mod; suffix_m++)
+        {
+            int final_m = (left.segment_mod*suffix_m)%mod;
+            prefix_frequency[final_m] += right.get_prefix_frequency(suffix_m);
+        }
+    }
+};
+
+-----

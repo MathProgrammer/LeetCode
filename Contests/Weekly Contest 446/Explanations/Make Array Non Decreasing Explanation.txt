@@ -1,0 +1,28 @@
+We can follow a simple greedy algorithm. 
+
+Start with an array of length 0. 
+Add A[i] to the final array if is is larger than the last element of the final array. 
+If it is not larger, then we can use an operation to condense it along with the last element of the final array. 
+
+=====
+
+The final array will be the array of the prefix maximums. 
+
+
+
+class Solution {
+public:
+    int maximumPossibleSize(vector<int>& nums) 
+    {
+        stack <int> S;
+        for(int n : nums)
+        {
+            if(S.empty() || n >= S.top())
+            {
+                S.push(n);
+            }
+        }
+
+        return S.size();
+    }
+};
