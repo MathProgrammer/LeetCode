@@ -1,0 +1,65 @@
+The number of ways to assign a path of length n is 2^{n - 1} 
+
+Refer the explanation to the next problem for the proof. 
+
+-----
+
+class Solution {
+private:
+    
+    void dfs(int v, int parent_v, int &max_height, vector <int> &height, vector <vector <int> > &tree)
+    {
+        height[v] = height[parent_v] + 1;
+        max_height = max(max_height, height[v]);
+
+        for(int child_v : tree[v])
+        {
+            if(child_v == parent_v)
+            {
+                continue;
+            }
+
+            dfs(child_v, v, max_height, height, tree);
+        }
+    }
+
+    int power_mod(long long x, long long power, int mod)
+    {
+        long long answer = 1;
+        while(power > 0)
+        {
+            if(power%2 == 1)
+            {
+                answer = (answer*x)%mod;
+            }
+
+            x = (x*x)%mod; 
+            power = power/2;
+        }
+
+        return answer;
+    }
+    
+public:
+    int assignEdgeWeights(vector<vector<int>>& edges) 
+    {
+        int no_of_vertices = edges.size() + 1;
+        vector <vector <int> > tree(no_of_vertices + 1); 
+        for(int i = 0; i < edges.size(); i++)
+        {
+            int u = edges[i][0], v = edges[i][1]; 
+            tree[u].push_back(v); 
+            tree[v].push_back(u);
+        }
+
+        int max_height = 0;
+        vector <int> height(no_of_vertices + 1);
+        height[0] = -1;
+        dfs(1, 0, max_height, height, tree);
+
+        const int MOD = 1e9 + 7;
+        int answer = power_mod(2, max_height - 1, MOD);
+        
+        return answer; 
+    }
+};

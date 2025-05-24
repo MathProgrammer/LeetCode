@@ -1,0 +1,40 @@
+Let f(i) be the maximum number of words till the first i letters. 
+
+Let L(i), be the last occurence of the alphabet S[i], on or before S[i - 3]. 
+
+f(i) = max{f(i - 1}, f(L(i) - 1) + 1}
+
+We either take a word ending at the i-th position, or we do not. 
+
+If we do, the number of words is f(L(i) - 1) + 1
+Else it is f(i - 1)
+
+There is a corner case where L(i) = 0, in that case, the largest word ending at i, is the entire prefix 
+so it is 1, not 1 + f(L(i) - 1). 
+
+-----
+
+class Solution {
+public:
+    int maxSubstrings(string word) 
+    {
+        map <int, int> last_occurence; 
+        vector <int> most_words_till(word.size()); 
+        for(int i = 3; i < word.size(); i++)
+        {
+            last_occurence[word[i - 3]] = i - 3; 
+            most_words_till[i] = most_words_till[i - 1];
+
+            if(last_occurence.count(word[i]) == 0)
+            {
+                continue;
+            }
+
+            int last_word_start = last_occurence[word[i]];
+            int words_with_last_ending_here = 1 + (last_word_start == 0 ? 0 : most_words_till[last_word_start - 1]);
+            most_words_till[i] = max(most_words_till[i], words_with_last_ending_here);
+        }
+
+        return most_words_till.back();
+    }
+};
