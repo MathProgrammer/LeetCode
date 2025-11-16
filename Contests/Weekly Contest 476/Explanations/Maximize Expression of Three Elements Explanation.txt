@@ -1,0 +1,19 @@
+The sum is maximized if we choose the largest integers for adding, and the 
+smallest for subtracting. 
+
+We can prove this with an exchange argument. 
+
+Any other sum can be improved upon by this choice. 
+
+-----
+
+class Solution {
+public:
+    int maximizeExpressionOfThree(vector<int>& nums) 
+    {
+        sort(nums.begin(), nums.end()); 
+        int n = nums.size();
+        int a = nums[n - 1], b = nums[n - 2], c = nums[0];
+        return (a + b - c);
+    }
+};©leetcode

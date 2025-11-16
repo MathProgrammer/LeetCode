@@ -1,0 +1,29 @@
+Let A = count(A) and B = count(B), 
+
+It is always possible to remove min(A, B). 
+
+Proof - Remove substrings of length 2 at a time. 
+
+If there is at least 1 a and 1 b, they must intersect at some point. 
+We can just remove this intersection. 
+
+We will be able to remove 2 min(A, B) letters from the string. 
+
+-----
+
+class Solution {
+public:
+    int minLengthAfterRemovals(string s) 
+    {
+        int as = 0, bs = 0; 
+        for(int i = 0; i < s.size(); i++)
+        {
+            as += (s[i] == 'a');
+            bs += (s[i] == 'b');
+        }
+
+        int common = min(as, bs); 
+        int remaining = s.size() - 2*common;
+        return remaining;
+    }
+};

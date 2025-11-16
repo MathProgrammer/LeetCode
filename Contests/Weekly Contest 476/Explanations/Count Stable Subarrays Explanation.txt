@@ -1,0 +1,210 @@
+Let us answer the question in a divide and conquery way. 
+
+Suppose we want to solve it for the range [L, R] and we already 
+have some information about the half-ranges [L, M] and [M + 1, R]
+where M = (L + R)/2
+
+How can we find the answer for [L, R] ? 
+
+We have to count the number of non-decreasing arrays. Where A[i] <= A[i + 1]
+
+A subarray will exist in [L, R] if 
+
+1. It is entirely contained in [L, M] 
+2. It is entirely contained in [M + 1, R]
+3. It begins in [L, M] and ends in [M + 1, R]
+
+We can get the number of subarrays which begin in [L, M] and end in [M + 1, R] 
+by knowing 
+
+1. The suffix of [L, M] which is non decreasing 
+2. The prefix of [M + 1, R] which is non increasing. 
+
+This means, we need to know the following information for the smaller ranges 
+
+1. Total increasing subarrays 
+2. Largest increasing prefix 
+3. Largest increasing suffix 
+
+-----
+
+We can do this with a segment tree and maintain the above information for every node. 
+
+The details of how to build each field from the corresponding fields in 
+left and right child are present in the Node class. 
+
+I have split the Node and the SegmentTree into separate classes for separation of concerns. 
+
+The Segment Tree only implements the update and get operations. 
+The Node class implements constructors both for a leaf node and intermediate node. 
+It also has a display function for debugging. 
+
+-----
+
+Node with Merging logic 
+
+class Node
+{
+    private: 
+    long long increasing, decreasing, equal; 
+    long long prefix_increasing, prefix_decreasing, prefix_equal; 
+    long long suffix_increasing, suffix_decreasing, suffix_equal; 
+    long long stable_subarrays;
+    int first, last, length;
+    
+    public: 
+    Node()
+    {
+        length = 0; 
+        first = last = 0;
+
+        prefix_increasing = suffix_increasing = increasing = 0;
+        prefix_decreasing = suffix_decreasing = decreasing = 0; 
+        prefix_equal = suffix_equal = equal = 0; 
+
+        stable_subarrays = increasing + decreasing - equal;
+    }
+    
+    Node(int n)
+    {
+        length = 1;
+        first = last = n; 
+
+        prefix_increasing = suffix_increasing = increasing = 1;
+        prefix_decreasing = suffix_decreasing = decreasing = 1; 
+        prefix_equal = suffix_equal = equal = 1; 
+
+        stable_subarrays = increasing + decreasing - equal;
+    }
+
+    Node(Node left, Node right)
+    {
+        first = left.first, last = right.last; 
+        length = left.length + right.length; 
+
+        prefix_increasing = left.prefix_increasing + 
+            (left.prefix_increasing == left.length && left.last <= right.first 
+             || left.last == 0 ? 
+                right.prefix_increasing : 0);
+
+        suffix_increasing = right.suffix_increasing + 
+            (right.suffix_increasing == right.length && left.last <= right.first 
+             || right.first == 0 ? 
+                left.suffix_increasing : 0);
+        
+        long long new_increasing = (left.last <= right.first ? left.suffix_increasing*right.prefix_increasing : 0);
+
+        increasing = left.increasing + right.increasing + new_increasing; 
+    }
+
+    long long get_stable_subarray_count()
+    {
+        return increasing;
+    }
+
+    void display()
+    {
+        cout << "Increasing = " << increasing << " Decreasing = " << decreasing << " Equal = " << equal << "\n";
+        cout << "Prefix increasing = " << prefix_increasing << " Suffix increasing = "
+            << suffix_increasing << "\n";
+        cout << "Prefix equal = " << prefix_equal << " Suffix equal = "
+            << suffix_equal << "\n";
+    }
+};
+
+----
+
+Segment Tree - 
+
+class SegmentTree 
+{
+    #define LEFT(n) (2*n)
+    #define RIGHT(n) (2*n + 1)
+    
+    private:
+    int no_of_elements;
+    vector <Node> tree; 
+
+    void update(int n, int left, int right, int position, int value)
+    {
+        if(right < position || position < left)
+        {
+            return;
+        }
+
+        if(left == right)
+        {
+            tree[n] = Node(value);
+            return;
+        }
+
+        int mid = (left + right)/2; 
+        update(LEFT(n), left, mid, position, value); 
+        update(RIGHT(n), mid + 1, right, position, value);  
+        tree[n] = Node(tree[LEFT(n)], tree[RIGHT(n)]);
+    }
+
+    Node get(int n, int left, int right, int query_left, int query_right)
+    {
+        if(right < query_left || query_right < left)
+        {
+            return Node();
+        }
+
+        if(query_left <= left && right <= query_right)
+        {
+            return tree[n];
+        }
+
+        int mid = (left + right)/2; 
+        Node left_answer = get(LEFT(n), left, mid, query_left, query_right); 
+        Node right_answer = get(RIGHT(n), mid + 1, right, query_left, query_right); 
+        Node answer = Node(left_answer, right_answer);
+
+        return answer;
+    }
+    
+    public: 
+    SegmentTree(int n)
+    {
+        no_of_elements = n;
+        tree.resize(4*no_of_elements);
+    }
+
+    void insert(int position, int value)
+    {
+        update(1, 0, no_of_elements - 1, position, value);
+    }
+
+    Node get(int left, int right)
+    {
+        return get(1, 0, no_of_elements - 1, left, right);
+    }
+};
+
+----
+
+Final Answer - 
+
+class Solution {
+public:
+    vector<long long> countStableSubarrays(vector<int>& nums, vector<vector<int>>& queries) 
+    {
+        SegmentTree segment_tree(nums.size()); 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            segment_tree.insert(i, nums[i]);
+        }
+
+        vector <long long> answer(queries.size());
+        for(int q = 0; q < queries.size(); q++)
+        {
+            int left = queries[q][0], right = queries[q][1];
+            Node answer_node = segment_tree.get(left, right);
+            answer[q] = answer_node.get_stable_subarray_count();
+            //answer_node.display();
+        }
+
+        return answer;
+    }
+};
