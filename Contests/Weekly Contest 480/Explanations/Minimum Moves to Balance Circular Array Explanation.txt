@@ -1,0 +1,70 @@
+This problem is made much simpler by the fact that there is only one sink. 
+
+An element is a sink if it is non negative. 
+
+We can start from the sink and have two pointers - left and right that go in 
+either direction. 
+
+We can be greedy here. 
+
+First, get as much as possible from elements at distance 1
+Then distance 2 
+and so on. 
+
+We will move as much from A[i] to sink as possible - 
+The minimum of these 2 quantities. 
+1. Either A[i] 
+2. Or |A[sink]|
+
+-----
+
+class Solution {
+public:
+    long long minMoves(vector<int>& balance) 
+    {
+        long long sum = 0;
+        int sink = -1; 
+        for(int i = 0; i < balance.size(); i++)
+        {
+            if(balance[i] < 0)
+            {
+                sink = i; 
+            }
+            else 
+            {
+                sum += balance[i];
+            }
+        }
+
+        if(sink == -1)
+        {
+            return 0;
+        }
+        
+        if(sum < abs(balance[sink]))
+        {
+            return -1;
+        }
+
+        long long answer = 0; 
+        int left = sink, right = sink, cost = 0; 
+        while(balance[sink] < 0)
+        {
+            left = (left == 0 ? balance.size() - 1 : left - 1); 
+            right = (right == balance.size() - 1 ? 0 : right + 1);
+            cost++;
+
+            int amount_added_left = min(abs(balance[sink]), balance[left]);
+            balance[sink] += amount_added_left;
+            
+            int amount_added_right = min(abs(balance[sink]), balance[right]);
+            balance[sink] += amount_added_right; 
+            
+            int amount_added = amount_added_left + amount_added_right;
+            
+            answer += amount_added*1LL*cost;
+        }
+        
+        return answer;
+    }
+};
