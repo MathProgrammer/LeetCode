@@ -1,0 +1,70 @@
+We can tackle this with a recurrence similar to Joseph's Problem. 
+
+Let f(n, R) and f(n, L) be the answer for [1, n] if we have the right deletion move next
+or the left deletion move next respectively. 
+
+Let us analyse how the recurrence works. 
+
+1. f(2m + 1, R). 
+
+After we finish, there will be m + 1 integers remaining and L to move. 
+However, it will not be the first (m + 1) integers. 
+
+It will be 1, 3, 5, 7, ... , 2m + 1 
+
+We can map this to [1, 2, 3, ... m + 1] with the following function g(i) = 2i - 1
+
+Therefore, whatever answer is there for f(m + 1, L), we just need to map it to 
+1, 3, 5, ... , 2m + 1 by using the function g. 
+
+So, f(2m + 1, R) = g( f(m + 1, L) ) = 2 f(m + 1, L) - 1 
+
+2. f(2m, R) = 2f(m, L) - 1
+
+By similar analysis
+
+3. f(2m + 1, L) = 2f(m, R) - 1
+
+By similar analysis
+
+4. f(2m, L) = 2f(m, R)
+
+This is a little different. 
+
+1, 2, 3, 4, ... , 2m becomes
+2, 4, 6, ... , 2m 
+
+In order to map it to [1, 2, ... , m] we have to apply g(i) = 2i 
+
+-----
+
+We can solve this recursively. Since we are moving from f(N, ?) to f(N/2, _), 
+this has logarithmic complexity.
+
+-----
+
+class Solution 
+{
+    private: 
+    long long get_survivor_position(long long n, int is_left)
+    {
+        if(n == 1)
+        {
+            return 1;
+        }
+        
+        int is_next_left = !is_left;
+        if(is_left && n%2 == 0)
+        {
+            return 2*get_survivor_position(n/2, is_next_left);
+        }
+
+        return 2*get_survivor_position(n/2 + n%2, is_next_left) - 1;
+    }
+    
+    public:
+    long long lastInteger(long long n) 
+    {
+        return get_survivor_position(n, false);
+    }
+};

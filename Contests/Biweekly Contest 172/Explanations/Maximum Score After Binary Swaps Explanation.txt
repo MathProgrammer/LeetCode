@@ -1,0 +1,36 @@
+Notice that a 1 can be moved to any position in it's prefix, by some number of swaps
+
+A 1 can never move to the suffix.
+
+We can follow a greedy assignment. 
+
+Keep track of a multiset of all available integers in the prefix 
+When we encounter a 1, assign it to the largest integer available
+Remove the assigned integer from the multiset so it cannot be assigned to 
+another 1. 
+
+-----
+
+class Solution 
+{
+    public:
+    long long maximumScore(vector<int>& nums, string s) 
+    {
+        long long score = 0; 
+        multiset <int> M;
+        for(int i = 0; i < nums.size(); i++)
+        {
+            M.insert(nums[i]);
+
+            if(s[i] == '1')
+            {
+                int largest = *M.rbegin(); 
+                M.erase(M.find(largest));
+
+                score += largest;
+            }
+        }
+
+        return score;
+    }
+};
