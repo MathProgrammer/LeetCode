@@ -1,0 +1,54 @@
+We can use the Pigeonhole Principle to prove that such a number always exists 
+if n is coprime to 2 and 5. 
+
+Consider the first N strings of the form 1, 11, 111, 1111 and so on. 
+
+There are only N possible modular classes (mod N). 
+
+If any of them = 0 (mod N), we are done. 
+
+Let us suppose none of them are = 0 (mod N). 
+This means 2 of them must have the same value. 
+
+Let them be 11... 1 (i times) = 11... 1 (j times) (mod N)
+
+Without loss of generality, i < j 
+
+=> 111... 1 (i - j times) 00 ... 0 (j times) = 0 (mod N)
+=> 111 ... 1 (i - j times) x 10^j = 0 (mod N) 
+
+if N is coprime to both 2 and 5, then N cannot divide 10^j. 
+So N must divide 111 ... 1 
+
+-----
+
+We also know the length of such a string cannot exceed N. 
+
+Simply try all such lengths till N. 
+
+Only keep track of the modular value with N, not the actual value 1, 11 and so on 
+as it might not fit inside 64 bits. 
+
+-----
+
+class Solution {
+public:
+    int minAllOneMultiple(int k) 
+    {
+        if(k%2 == 0 || k%5 == 0)
+        {
+            return -1;
+        }
+
+        int answer_length = 1;
+        int answer = 1; 
+        while(answer%k != 0)
+        {
+            answer = answer*10 + 1;
+            answer %= k;
+            answer_length++;
+        }
+
+        return answer_length;
+    }
+};

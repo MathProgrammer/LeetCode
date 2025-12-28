@@ -1,0 +1,31 @@
+#include <vector> 
+
+using namespace std; 
+
+class Solution {
+public:
+    long long maximumScore(vector<int>& nums) 
+    {
+        int no_of_elements = nums.size();
+        vector <long long> prefix_sum(no_of_elements); 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            prefix_sum[i] = nums[i] + (i > 0 ? prefix_sum[i - 1] : 0);
+        }
+
+        vector <int> suffix_min(no_of_elements + 1); 
+        suffix_min[no_of_elements - 1] = nums[no_of_elements - 1]; 
+        for(int i = nums.size() - 2; i >= 0; i--)
+        {
+            suffix_min[i] = min(suffix_min[i + 1], nums[i]);
+        }
+
+        long long answer = -1e18; 
+        for(int i = 0; i < nums.size() - 1; i++)
+        {
+            answer = max(answer, prefix_sum[i] - suffix_min[i + 1]);
+        }
+
+        return answer;
+    }
+};

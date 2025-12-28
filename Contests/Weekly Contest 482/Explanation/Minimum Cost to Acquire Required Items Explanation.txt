@@ -1,0 +1,28 @@
+Let us first notice that costBoth = min(costBoth, cost1 + cost2). 
+
+We will buy as much costBoth as we can and then buy the items individually. 
+We will buy min(need1, need2) items. 
+
+After that, we will be left with at most 1 item. 
+
+Suppose we only have need1 item. We will purchase it with the best cost min(costBoth, cost1).
+
+----
+
+class Solution {
+public:
+    long long minimumCost(int cost1, int cost2, int costBoth, int need1, int need2) 
+    {
+        long long common_need = min(need1, need2);
+        costBoth = min(costBoth, cost1 + cost2);
+
+        long long cost = 0; 
+        cost += costBoth*common_need; 
+        need1 -= common_need; 
+        need2 -= common_need; 
+
+        cost += need1*1LL*min(cost1, costBoth); 
+        cost += need2*1LL*min(cost2, costBoth);
+        return cost;
+    }
+};
