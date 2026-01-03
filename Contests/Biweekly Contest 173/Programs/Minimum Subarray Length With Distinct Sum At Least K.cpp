@@ -1,0 +1,65 @@
+#include <vector> 
+using namespace std; 
+
+class Solution {
+    private: 
+    long long get_sum(vector <int> &nums, int length)
+    {
+        int left = 0, right = 0;
+        long long best_sum = 0, current_sum = 0;
+        const int MAX_N = 1e5 + 5;
+        vector <int> frequency(MAX_N);
+        while(right < nums.size())
+        {
+            int R = nums[right];
+            frequency[R]++; 
+            if(frequency[R] == 1)
+            {
+                current_sum += R;
+            }
+
+            best_sum = max(best_sum, current_sum);
+
+            if(right - left + 1 == length)
+            {
+                int L = nums[left];
+                frequency[L]--;
+                if(frequency[L] == 0)
+                {
+                    current_sum -= L;
+                }
+                left++;
+            }
+
+            right++;
+        }
+
+        return best_sum;
+    }
+    
+public:
+    int minLength(vector<int>& nums, int k) 
+    {
+        if(get_sum(nums, nums.size()) < k)
+        {
+            return -1;
+        }
+
+        int left = 0, right = nums.size();
+        while(right - left > 1)
+        {
+            int mid = (left + right)/2; 
+            if(get_sum(nums, mid) < k)
+            {
+                left = mid;
+            }
+            else 
+            {
+                right = mid;
+            }
+        }
+
+        int answer = right;
+        return answer;
+    }
+};
