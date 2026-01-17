@@ -1,0 +1,42 @@
+#include <vector> 
+#include <algorithm> 
+
+using namespace std; 
+
+class Solution 
+{
+    private: 
+    int distance(vector <int> &P, vector <int> &Q)
+    {
+        return abs(P[0] - Q[0]) + abs(P[1] - Q[1]);
+    }
+    
+    public:
+    vector<int> bestTower(vector<vector<int>>& towers, vector<int>& center, int radius) 
+    {
+        sort(towers.begin(), towers.end());
+        int answer = -1, best_quality = -1;
+        for(int i = 0; i < towers.size(); i++)
+        {
+            if(distance(towers[i], center) > radius)
+            {
+                continue;
+            }
+            
+            if(towers[i][2] > best_quality)
+            {
+                answer = i;
+                best_quality = towers[i][2];
+            }
+        }
+        
+        vector <int> answer_tower(2, -1);
+        if(answer != -1)
+        {
+            answer_tower[0] = towers[answer][0];
+            answer_tower[1] = towers[answer][1];
+        }
+        
+        return answer_tower;
+    }
+};
