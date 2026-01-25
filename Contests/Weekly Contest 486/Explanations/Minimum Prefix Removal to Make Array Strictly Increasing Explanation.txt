@@ -1,0 +1,25 @@
+Starting from the end, find the first position i which does not obey 
+
+nums[i] < nums[i + 1] i.e. nums[i] >= nums[i + 1]
+
+We have to remove[0, i] -> i + 1 elements 
+
+-----
+
+class Solution {
+public:
+    int minimumPrefixLength(vector<int>& nums) 
+    {
+        int answer = 0, is_increasing = true; 
+        for(int i = nums.size() - 2; i >= 0; i--)
+        {
+            if(nums[i] >= nums[i + 1])
+            {
+                answer = i + 1;
+                break;
+            }
+        }
+
+        return answer;
+    }
+};

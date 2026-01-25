@@ -1,0 +1,67 @@
+Do the following - 
+
+1. Make a separate array of all the non negative elements 
+2. Rotate this array K times 
+3. Use this rotated array to build the final answer 
+
+-----
+
+How to do the rotation ? 
+
+We are basically doing modular subtraction (mod n), where n is the size of the array 
+
+The index i goes to i - k (mod n) 
+
+-----
+
+class Solution {
+    private: 
+    vector <int> rotate(vector <int> &A, int k)
+    {
+        int n = A.size();
+        vector <int> answer(n); 
+        if(n == 0)
+        {
+            return answer;
+        }
+
+        k %= n;
+        for(int i = 0; i < n; i++)
+        {
+            int rotated_position = (i - k + n)%n;
+            answer[rotated_position] = A[i];
+        }
+        
+        return answer;
+    }
+
+    public:
+    vector<int> rotateElements(vector<int>& nums, int k) 
+    {
+        vector <int> non_negative; 
+        for(int n : nums)
+        {
+            if(n >= 0)
+            {
+                non_negative.push_back(n);
+            }
+        }
+
+        vector <int> rotated_non_negative = rotate(non_negative, k); 
+
+        vector <int> answer(nums.size()); 
+        for(int i = 0, j = 0; i < nums.size(); i++)
+        {
+            if(nums[i] >= 0)
+            {
+                answer[i] = rotated_non_negative[j++];
+            }
+            else 
+            {
+                answer[i] = nums[i];
+            }
+        }
+
+        return answer;
+    }
+};
