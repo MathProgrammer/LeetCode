@@ -1,0 +1,26 @@
+The last element is either the first or the last element. 
+
+Let us try to prove this. 
+
+If the largest element is the first or last element, A can simply take A[1, n - 1] or A[2, n]. 
+
+Otherwise, we will show by contradiction that the last element cannot be any other element. 
+Let us suppose the surviving element is A[i], where 1 < i < n 
+In the simplest case, let us say A took A[i + 1, n] and B took A[1, i - 1]. 
+
+If A[i] > A[1], then B would have taken A[2, i] instead. 
+If A[i] < A[1], then it would have been better for A to take A[2, n] instead. 
+
+This shows that we will never have a middle element as the survivor. 
+
+If it is smaller than either of A[1], A[n] -> A can just take A[1, n - 1] or A[2, n] 
+If it is larger than either of A[1], A[n] -> B will not allow it to remain 
+
+----
+
+class Solution {
+public:
+    int finalElement(vector<int>& nums) {
+        return max(nums[0], nums.back());
+    }
+};

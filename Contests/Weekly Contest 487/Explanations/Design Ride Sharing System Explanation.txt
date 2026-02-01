@@ -1,0 +1,81 @@
+Let us maintain the following data structures - 
+
+1. A map of the time at which each driver entered 
+2. A map of the time at which each rider entered 
+3. A set of all the rider times 
+4. A set of all the driver times 
+5. A reverse map containing the rider, corresponding to the given time. 
+
+-----
+
+While performing an insertion, we will insert the time into the respective set 
+and update the respective map. 
+
+In case it is a rider, we will update the reverse map too. 
+
+----
+
+In case of matching, we will extract the first element of both the sets. 
+This is a time, we will find the respecitve driver and rider for that time and return it. 
+
+For cancellations, we will first find the time corresponding to that rider using our revers map. 
+Then, erase that time from the rider set. 
+
+-----
+
+class RideSharingSystem 
+{
+    private: 
+    set <int> riders, drivers;
+    map <int, int> rider_time, driver_time, time_for_rider;
+    int time;
+    
+    public:
+    RideSharingSystem() 
+    {
+        time = 0;
+    }
+    
+    void addRider(int riderId) 
+    {
+        time++;
+        rider_time[time] = riderId;
+        time_for_rider[riderId] = time;
+        riders.insert(time);    
+    }
+    
+    void addDriver(int driverId) 
+    {
+        time++;
+        driver_time[time] = driverId;
+        drivers.insert(time);    
+    }
+    
+    vector<int> matchDriverWithRider() 
+    {
+        vector <int> match(2, -1); 
+        if(riders.size() == 0 || drivers.size() == 0)
+        {
+            return match;
+        }
+        
+        int earliest_rider = *riders.begin(); 
+        int earliest_driver = *drivers.begin(); 
+        
+        match[0] = driver_time[earliest_driver], match[1] = rider_time[earliest_rider];
+
+        drivers.erase(earliest_driver); 
+        riders.erase(earliest_rider);
+
+        return match;
+    }
+    
+    void cancelRider(int riderId) 
+    {
+        int time_for_this_rider = time_for_rider[riderId];
+        if(riders.count(time_for_this_rider) != 0)
+        {
+            riders.erase(time_for_this_rider);
+        }
+    }
+};

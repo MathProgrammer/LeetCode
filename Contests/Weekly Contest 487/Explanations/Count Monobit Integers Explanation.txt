@@ -1,0 +1,22 @@
+Integers that are monobit are all of the form 2^n - 1. 
+
+Iterate through all of them smaller than n. There are O(log n) number of them. 
+
+-----
+
+class Solution {
+public:
+    int countMonobit(int n) 
+    {
+        int count = 1; 
+        int monobit = 1; 
+        while(monobit <= n)
+        {
+            count++;
+            monobit <<= 1; 
+            monobit |= 1; 
+        }
+
+        return count;
+    }
+};
