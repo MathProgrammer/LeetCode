@@ -1,0 +1,82 @@
+The answer is always either -1, 0, 1, 2, 3. 
+
+The intuition is that we can sort [0, n - 1] and [1, n] to sort the string in most cases 
+
+----
+
+Case 1 - 0 
+
+The string is already sorted 
+
+
+----
+
+Case 2 - -1 
+
+The string has to be of length 2 and should not be sorted. The only way to sort is to sort 
+the entire string 
+
+----
+
+Case 3 - 1 
+
+Applying one of [0, n - 1] or [1, n] is enough to sort the string. 
+This means that either the first or the last character should be in it's sorted position. 
+
+-----
+
+Case 4 - 3 
+
+Suppose all of these conditions hold - 
+
+a. The first character is in the last position 
+b. The last character is in the first position 
+c. There is only one occurence of the first character 
+d. There is only one occurence of the last character. 
+
+Then we need to apply 3 sorts - [1, n - 1], [0, 1], [1, n] 
+
+-----
+
+Case 5 - 2 
+
+This is every other situation. Sorting [0, n - 1] [1, n] is enough to sort the string
+
+-----
+
+class Solution {
+public:
+    int minOperations(string s) 
+    {
+        string sorted_s = s; 
+        sort(sorted_s.begin(), sorted_s.end()); 
+
+        const int NOT_POSSIBLE = -1;
+        if(s.size() == 2 && s != sorted_s)
+        {
+            return NOT_POSSIBLE;
+        }
+
+        if(s == sorted_s)
+        {
+            return 0;
+        }
+
+        if(s[0] == sorted_s[0] || s.back() == sorted_s.back())
+        {
+            return 1;
+        }
+
+        int only_one_start = (sorted_s[0] != sorted_s[1]); 
+        int only_one_finish = (sorted_s[s.size() - 1] != sorted_s[s.size() - 2]);
+        if(s[0] == sorted_s.back() 
+           && s.back() == sorted_s[0] 
+           && only_one_start
+           && only_one_finish)
+        {
+            return 3;
+        }
+
+        return 2; 
+    }
+};

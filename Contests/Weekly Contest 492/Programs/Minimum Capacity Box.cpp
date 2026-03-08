@@ -1,0 +1,25 @@
+#include <vector> 
+
+using namespace std; 
+
+class Solution {
+public:
+    int minimumIndex(vector<int>& capacity, int itemSize) 
+    {
+        int answer = -1; 
+        for(int i = 0; i < capacity.size(); i++)
+        {
+            if(itemSize > capacity[i])
+            {
+                continue;
+            }
+
+            if(answer == -1 || (itemSize < capacity[answer] && capacity[i] < capacity[answer]))
+            {
+                answer = i;
+            }
+        }
+
+        return answer;
+    }
+};
