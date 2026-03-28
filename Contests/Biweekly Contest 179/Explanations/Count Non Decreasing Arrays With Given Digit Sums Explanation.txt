@@ -1,0 +1,114 @@
+There are 5000 integers and the digit sum is at most 50, there won't be many integers with the same digit sum. 
+
+To be precise, the maximum number of integers with the same digit sum is 365. 
+
+For every integer from 1 to 50, let us keep a list of all integers with the same digit sum 
+
+Like 
+
+2 -> 2, 11, 20, 101, 110, ... 
+3 -> 3, 12, 21, 30, 102, ... 
+. 
+. 
+. 
+
+And so on 
+
+----
+
+Let f(i, j) be the number of ways to construct the array suffix [i, n] such that 
+
+A[i] >= the j-th smallest integer for that digit sum. 
+
+For example if DigitSum[i] = D, then f(i, j) represents 
+
+1. The number of ways to make the suffix A[i, n] 
+2. A[i] >= the j-th smallest integer with sum D.
+
+----
+
+Now for the transition, 
+
+f(i, j) = f(i, j + 1) + 
+          f(i + 1, k) + f(i + 1, k + 1) + .... + f(i + 1, )
+
+where DigitSum[i + 1][k] is the first integer >= DigitSum[i][j] 
+
+We can use binary search to find k. 
+
+----
+
+The answer is f(0, 0). 
+
+----
+
+class Solution 
+{
+    #define all(v) (v).begin(), (v).end()
+    
+    private: 
+    int max(int x, int y)
+    {
+        return (x > y ? x : y);
+    }
+    
+    int get_digit_sum(int n)
+    {
+        int sum = 0; 
+        while(n > 0)
+        {
+            sum += n%10; 
+            n /= 10;
+        }
+
+        return sum;
+    }
+    
+    public:
+    int countArrays(vector<int>& digitSum) 
+    {
+        const int MAX_N = 5000, MAX_SUM = 50; 
+        int max_integers_with_one_digit_sum = 0;
+        vector <vector <int> > integers_with_sum(MAX_SUM + 1);
+        for(int n = 0; n <= MAX_N; n++)
+        {
+            int digit_sum = get_digit_sum(n); 
+            integers_with_sum[digit_sum].push_back(n);
+            max_integers_with_one_digit_sum = max(max_integers_with_one_digit_sum, integers_with_sum[digit_sum].size());
+        }
+
+        const int MOD = 1e9 + 7;
+        vector <vector <int> > no_of_ways(digitSum.size(), vector <int> (max_integers_with_one_digit_sum + 1));
+        for(int i = digitSum.size() - 1; i >= 0; i--)
+        {
+            int current_sum = digitSum[i];
+            
+            for(int j = integers_with_sum[current_sum].size() - 1; j >= 0; j--)
+            {
+                if(j < integers_with_sum[current_sum].size() - 1)
+                {
+                    no_of_ways[i][j] = no_of_ways[i][j + 1];
+                }
+                
+                if(i == digitSum.size() - 1)
+                {
+                    no_of_ways[i][j] += 1; 
+                    continue;
+                }
+
+                int d1 = integers_with_sum[current_sum][j];
+                int next_sum = digitSum[i + 1];
+                int k = lower_bound(all(integers_with_sum[next_sum]), d1) - integers_with_sum[next_sum].begin(); 
+
+                no_of_ways[i][j] += no_of_ways[i + 1][k];
+                no_of_ways[i][j] %= MOD;
+            }
+        }
+
+        int answer = integers_with_sum[digitSum[0]].size() > 0 ? 
+                no_of_ways[0][0] : 
+                0;
+
+        return answer;
+    }
+};
