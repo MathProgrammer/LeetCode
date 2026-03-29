@@ -1,3 +1,13 @@
+Keep 4 maps. 
+
+For every x-value, we should know the minimum and maximum y-value. 
+For every y-value, we should know the minimum and maximum x-value. 
+
+A building is covered on left and right directions if it is not the minimum or maximum x for the given y. 
+The same reasoning holds for it's coverage up and down. 
+
+----
+
 #include <map> 
 #include <vector> 
 #include <algorithm> 

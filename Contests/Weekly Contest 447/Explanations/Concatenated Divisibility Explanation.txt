@@ -1,6 +1,39 @@
-#include <vector> 
+The constraints are small enough to allow an exponential solution, but not a factorial solution. 
+Hence, we cannot check every single permutation of the array. 
 
-using namespace std; 
+Please note that in this problem, they are asking for lexicographically smallest permutation of the array, 
+Not the lexicographically smallest number. 
+
+For example, [3, 12, 45] 
+
+12345 < 31245 
+
+But, the answer is 31245 because [3, 12, 45] is smaller than [12, 3, 45]. 
+
+---
+
+Let us make a table is_possible[2^n][K], 
+where is_possible[m][mod] denotes whether it is possible to reach a remainder of mod with the subset represented by mask.
+
+After filling this table, we will then construct the final array greedily. 
+
+Initially is_possible[2^n - 1][0] is our required table state. 
+We will look for the smallest number nums[i], such that we can populate the answer if nums[i]
+is our first number. 
+How to use the table to check if nums[i] can be the first number ? 
+
+If nums[i] is the first number, the total remainder is 
+
+nums[i] x 2^d + (remaining modulo) = 0, (d is the number of digits of the remaining numbers)
+
+(remaining modulo) = 0 - nums[i] x 2^d 
+
+The prefix is nums[i] followed by d 0's. The suffix is whatever modulo of the remaining numbers. 
+We have to check whether it is possible to get the required modulo with the remaining numbers. 
+
+This is elegantly represented by is_possible[m xor (2^i)][suffix_mod]. 
+
+---
 
 class Solution 
 {

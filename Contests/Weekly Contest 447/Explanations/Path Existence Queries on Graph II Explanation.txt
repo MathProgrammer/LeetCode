@@ -1,0 +1,133 @@
+Let us sort vertices by their value i.e. nums[i]. 
+
+Let us rename all vertices by their index in the sorted array. 
+This ensures that all vertices are connected only to a segment of the array containing them. 
+
+A query u -> v will instead be index[u]->index[v]. 
+
+----
+
+How do we calculate the minimum number of jumps to go from u to v in the sorted array ? 
+
+For every vertex v, let us only keep track of the right most element that it is connected to.
+In case a vertex is not connected to any vertex on the right (nums[v + 1] - nums[v] > D), 
+connect the vertex to an auxilliary vertex N (which does not exist in the array).
+
+Let this be next[v]. 
+
+We now have to calculate how many times we need to do (u -> next[v]) till (u >= v). 
+
+This can take O(n) time for each query. 
+
+There is a simple and beautiful idea we can do to make it faster ! 
+Binary lifting ! 
+
+For every vertex, keep track of the vertex it would reach if you took 2^i steps. 
+
+next[v][2^0], next[v][2^1], next[v][2^2], ... and so on. 
+We will store 20 (log n) neighbours for each vertex. 
+
+Suppose the distance from u to v is d. 
+We will have to make jumps according to the binary representation of d. 
+For example if d = 1001011001, we can make a journey from u -> v like this 
+
+1. u1 = next[u][9] -> 512
+2. u2 = next[u1][6] -> 64
+3. u3 = next[u2][4] -> 16
+4. u4 = next[u3][3] -> 8
+5. u5 = next[u4][0] -> 1
+
+A journey of length 599 is reduced to just 5 jumps. 
+
+-----
+
+In order to calculate the minimum distance from u -> v 
+
+We will try to make as big a jump as we can till u < v in descending order of powers or 2
+
+We should end at a vertex a single jump away from v. 
+
+-----
+
+class Solution 
+{
+    public:
+    
+    vector<int> pathExistenceQueries(int no_of_vertices, vector<int>& nums, int maxDiff, vector<vector<int>>& queries) 
+    {
+        vector <pair <int, int> > vertices; 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            vertices.push_back(make_pair(nums[i], i));
+        }
+        
+        sort(vertices.begin(), vertices.end());
+        sort(nums.begin(), nums.end());
+        
+        map <int, int> index; 
+        for(int i = 0; i < vertices.size(); i++)
+        {
+            index[vertices[i].second] = i;
+        }
+
+        const int MAX_L = 20;
+        vector <vector <int> > next(no_of_vertices + 1, vector <int> (MAX_L));
+        next[no_of_vertices][0] = no_of_vertices;
+        for(int i = no_of_vertices - 1; i >= 0; i--)
+        {
+            if(i == no_of_vertices - 1 || nums[i + 1] - nums[i] > maxDiff)
+            {
+                next[i][0] = no_of_vertices;
+                continue;
+            }
+
+            int segment_end = upper_bound(nums.begin(), nums.end(), nums[i] + maxDiff) - nums.begin() - 1;
+            next[i][0] = segment_end;
+        }
+        
+        for(int l = 1; l < MAX_L; l++)
+        {
+            for(int v = 0; v <= no_of_vertices; v++)
+            {
+                int next_stop = next[v][l - 1];
+                next[v][l] = next[next_stop][l - 1];
+            }
+        }
+        
+        vector <int> shortest_path(queries.size(), -1);
+        for(int i = 0; i < queries.size(); i++)
+        {
+            int u = queries[i][0], v = queries[i][1]; 
+            u = index[u], v = index[v];
+
+            if(u > v)
+            {
+                swap(u, v);
+            }
+
+            if(u == v)
+            {
+                shortest_path[i] = 0;
+                continue;
+            }
+
+            int path = 0;
+            for(int l = MAX_L - 1; l >= 0 && u < v; l--)
+            {
+                if(next[u][l] < v)
+                {
+                    u = next[u][l];
+                    path += (1 << l); //cout << "Jump " << (1 << l) << " taken u = " << u << "\n";
+                }
+            }
+            
+            u = next[u][0];
+            if(u != no_of_vertices && u >= v)
+            {
+                shortest_path[i] = path + 1;
+            }
+        }
+
+        return shortest_path;
+    }
+};

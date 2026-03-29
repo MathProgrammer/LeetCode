@@ -1,8 +1,12 @@
-#include <vector> 
-#include <algorithm> 
-#include <map> 
+There are easier ways to solve this, but I have re-used by solution for the harder problem in this contest. 
 
-using namespace std; 
+Explanation is available in that file. 
+
+Use binary lifting to find the minimum distance between u and v. 
+
+Answer a query as true only if it is possible to reach v from u. 
+
+-----
 
 class Solution {
     public:
@@ -75,9 +79,9 @@ class Solution {
                 }
 
                 u = next[u][0];
-                is_reachable[i] = (u >= v);
+                is_reachable[i] = (u != no_of_vertices && u >= v);
             }
     
             return is_reachable;
         }
-    };
+};
