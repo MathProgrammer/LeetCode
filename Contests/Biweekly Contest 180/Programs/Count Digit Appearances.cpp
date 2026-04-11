@@ -1,0 +1,31 @@
+#include <vector> 
+
+using namespace std; 
+
+class Solution 
+{
+    private: 
+    int get_count(int n, int d)
+    {
+        int count = 0;
+        while(n > 0)
+        {
+            count += (n%10 == d); 
+            n /= 10;
+        }
+
+        return count;
+    }
+    
+    public:
+    int countDigitOccurrences(vector<int>& nums, int digit) 
+    {
+        int total_count = 0;
+        for(int n : nums)
+        {
+            total_count += get_count(n, digit);
+        }
+        
+        return total_count;
+    }
+};

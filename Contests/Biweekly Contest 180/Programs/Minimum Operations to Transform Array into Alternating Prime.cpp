@@ -1,0 +1,68 @@
+#include <vector> 
+
+using namespace std; 
+
+class Solution 
+{
+    private: 
+    void sieve(vector <int> &primes, int N)
+    {
+        vector <int> is_prime(N, true); 
+        is_prime[0] = is_prime[1] = false; 
+        for(int p = 2; p < N; p++)
+        {
+            if(is_prime[p])
+            {
+                primes.push_back(p);
+            }
+
+            for(int i = 0; i < primes.size() && primes[i]*p < N; i++)
+            {
+                is_prime[p*primes[i]] = false; 
+
+                if(p%primes[i] == 0)
+                {
+                    break;
+                }
+            }
+        }
+    }
+    
+    public:
+    int minOperations(vector<int>& nums) 
+    {
+        const int MAX_N = 1e5 + 5;
+        vector <int> primes; 
+        sieve(primes, MAX_N);
+
+        int total_steps = 0; 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            const int PRIME = 0, NON_PRIME = 1;
+            int steps_here = 0;
+            switch(i%2)
+            {
+                case PRIME: 
+                {
+                    int prime_index = lower_bound(primes.begin(), primes.end(), nums[i]) - primes.begin();
+                    steps_here = primes[prime_index] - nums[i];
+                    //cout << "Next prime to " << nums[i] << "is " << primes[prime_index] << "\n";
+                    break;
+                }
+
+                case NON_PRIME : 
+                {
+                    if(binary_search(primes.begin(), primes.end(), nums[i]))
+                    {
+                        steps_here = (nums[i] == 2 ? 2 : 1);
+                    }
+                    break;
+                }
+            }
+
+            total_steps += steps_here;
+        }
+
+        return total_steps;
+    }
+};
