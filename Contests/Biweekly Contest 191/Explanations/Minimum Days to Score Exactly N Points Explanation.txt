@@ -1,0 +1,43 @@
+We can solve this problem with dynamic programming. 
+
+Let f(i) be the minimum time taken for i days. 
+
+We can iterate over the most recent rest day. 
+
+f(i) = f(i - T) + 1 + j 
+
+Where T is the j-th triangular number. 
+
+-----
+
+Also, there is no rest day if we use the triangular numbers from 0 
+
+Then, in that base case, f(T) = j 
+
+We can do this in the beginning. 
+
+-----
+
+class Solution {
+public:
+    int minDays(int n) 
+    {
+        vector <int> minimum_days(n + 1, n + 1); 
+        minimum_days[0] = 0;
+        for(int i = 1, t = 1; t <= n; i++, t += i)
+        {
+            minimum_days[t] = i;
+        }
+
+        minimum_days[0] = 0;
+        for(int i = 1; i <= n; i++)
+        {
+            for(int j = 1, t = 1; t <= i; j++, t += j)
+            {
+                minimum_days[i] = min(minimum_days[i], minimum_days[i - t] + 1 + j);
+            }
+        }
+
+        return minimum_days[n];
+    }
+};

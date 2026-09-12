@@ -1,0 +1,134 @@
+#include <vector> 
+#include <map> 
+
+using namespace std;
+
+#define LEFT(n) (2*n) 
+#define RIGHT(n) (2*n + 1)
+
+class SegmentTree 
+{
+    private: 
+    int no_of_elements; 
+    vector <int> tree; 
+
+    void update(int n, int left, int right, int position, int value)
+    {
+        if(right < position || position < left)
+        {
+            return;
+        }
+        
+        if(left == right)
+        {
+            tree[n] += value; 
+            return;
+        }
+
+        int mid = (left + right)/2; 
+        update(LEFT(n), left, mid, position, value); 
+        update(RIGHT(n), mid + 1, right, position, value); 
+
+        tree[n] = tree[LEFT(n)] + tree[RIGHT(n)];
+    }
+
+    int get_sum(int n, int left, int right, int query_left, int query_right)
+    {
+        if(query_right  < left || right < query_left || query_right < query_left)
+        {
+            return 0;
+        }
+
+        if(query_left <= left && right <= query_right)
+        {
+            return tree[n];
+        }
+
+        int mid = (left + right)/2; 
+
+        return get_sum(LEFT(n), left, mid, query_left, query_right) 
+            + get_sum(RIGHT(n), mid + 1, right, query_left, query_right);
+    }
+
+    public: 
+    SegmentTree(int n)
+    {
+        no_of_elements = n; 
+        tree.resize(4*n);
+    }
+
+    void update(int position, int value)
+    {
+        update(1, 1, no_of_elements, position, value);
+    }
+
+    int get_sum(int left, int right)
+    {
+        return get_sum(1, 1, no_of_elements, left, right);
+    }
+};
+
+class Solution 
+{
+    private: 
+    void compress_ids(vector <long long> A, map <long long, int> &id)
+    {
+        sort(A.begin(), A.end()); 
+        id[A[0]] = 1;
+        for(int i = 1; i < A.size(); i++)
+        {
+            if(A[i] == A[i - 1])
+            {
+                continue;
+            }
+
+            id[A[i]] = id[A[i - 1]] + 1;
+        }
+    }
+    
+    public:
+    long long distantSubarrays(vector<int>& nums, int goal, int k)
+    {
+        vector <long long> prefix_sum(nums.size()); 
+        for(int i = 0; i < nums.size(); i++)
+        {
+            prefix_sum[i] = (i == 0 ? 0 : prefix_sum[i - 1]) + nums[i];
+        }
+
+        vector <long long> compressed_sums; 
+        compressed_sums.push_back(0);
+        for(int i = 0; i < prefix_sum.size(); i++)
+        {
+            compressed_sums.push_back(prefix_sum[i]); 
+            compressed_sums.push_back(prefix_sum[i] - goal - k);
+            compressed_sums.push_back(prefix_sum[i] - goal + k);
+        }
+
+        map <long long, int> ids; 
+        compress_ids(compressed_sums, ids); 
+
+        /*(S[R] - S[L]) - G >= K
+        S[R] - Goal - K >= S[L]
+        
+        G - (S[R] - S[L]) >= K
+        S[L] >= S[R] - G + K*/
+        long long answer = 0; 
+        SegmentTree segmentTree(compressed_sums.size());
+        segmentTree.update(ids[0], 1);
+        for(int i = 0; i < prefix_sum.size(); i++)
+        {
+            long long lower_bound = prefix_sum[i] - goal - k;
+            long long lower_subarrays = segmentTree.get_sum(1, ids[lower_bound]);
+            
+            long long upper_bound = prefix_sum[i] - goal + k;
+            long long upper_subarrays = segmentTree.get_sum(ids[upper_bound], compressed_sums.size());
+
+            long long common_subarrays = segmentTree.get_sum(ids[upper_bound], ids[lower_bound]);
+
+            answer += lower_subarrays + upper_subarrays - common_subarrays;
+            segmentTree.update(ids[prefix_sum[i]], 1);
+        }
+
+        return answer;
+    }
+};
