@@ -1,0 +1,99 @@
+Under what conditions is a subarray good ? 
+
+Suppose the sum of the subarray is S. 
+
+Suppose we change A[i] = x from the subarray. 
+How does the subarray sum change ? It is S - 2x 
+
+For S - 2x = 0 (mod k) 
+S = 2x (mod k) 
+
+There are two possible candidates. 
+
+R1 = S/2 
+R2 = (S + k)/2
+
+For example, there are two candidates to the equation 
+2x = 4 (mod 10) 
+
+R1 = 4/2 = 2 
+R2 = (10 + 4)/2 = 7 
+
+----
+
+In this version of the problem, N is small, but K is not. 
+
+Let us fix each subarray [L, R] and check if it is good ? 
+
+1. If the sum = 0 
+2. If R1 exists 
+3. If R2 exists 
+
+We can keep track of the last occurence of every remainder mod K. 
+
+----
+
+class Solution {
+public:
+    int longestSubarray(vector<int>& nums, int k) 
+    {
+        vector <long long> sum(nums.size(), 0);
+        int answer = 0;
+        for(int i = 0; i < nums.size(); i++)
+        {
+            long long current = nums[i];
+            if(nums[i] < 0)
+            {
+                long long oo = 1e9;
+                current += oo*k;
+                current %= k;
+            }
+
+            sum[i] = (i == 0 ? 0 : sum[i - 1]);
+            sum[i] += current; 
+            sum[i] %= k;
+        }
+
+        map <int, int> last;
+        for(int r = 0; r < nums.size(); r++)
+        {
+            long long current = nums[r];
+            if(nums[r] < 0)
+            {
+                long long oo = 1e9;
+                current += oo*k;
+            }
+
+            current %= k; 
+            last[current] = r;
+            
+            for(int l = 0; l <= r; l++)
+            {
+                int segment_length = r - l + 1;
+                int segment_sum = sum[r] - (l == 0 ? 0 : sum[l - 1]) + k; 
+                segment_sum %= k;
+
+                int r1 = (segment_sum%2 == 0 ? segment_sum/2 : -1); 
+                int r2 = ((segment_sum + k)%2 == 0 ? (segment_sum + k)/2 : -1);
+                //cout << "Segment Length = " << l << "," << r << "] S = " << segment_sum << " R1 = " << r1 << " R2 = " << r2 << "\n";
+
+                if(segment_sum == 0)
+                {
+                    answer = max(answer, segment_length);
+                }
+
+                if(r1 != -1 && last.count(r1) != 0 && last[r1] >= l)
+                {
+                    answer = max(answer, segment_length);
+                }
+
+                if(r2 != -1 && last.count(r2) != 0 && last[r2] >= l)
+                {
+                    answer = max(answer, segment_length);
+                }
+            }
+        }
+
+        return answer;
+    }
+};

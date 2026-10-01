@@ -1,0 +1,138 @@
+Under what conditions is a subarray good ? 
+
+Suppose the sum of the subarray is S. 
+
+Suppose we change A[i] = x from the subarray. 
+How does the subarray sum change ? It is S - 2x 
+
+For S - 2x = 0 (mod k) 
+S = 2x (mod k) 
+
+There are two possible candidates. 
+
+R1 = S/2 
+R2 = (S + k)/2
+
+For example, there are two candidates to the equation 
+2x = 4 (mod 10) 
+
+R1 = 4/2 = 2 
+R2 = (10 + 4)/2 = 7 
+
+----
+
+Notice that K is small in this version of the problem. 
+
+Supposer we fix a subarray [L, R] 
+
+Let the prefix sum of A[1, R] = r 
+And the prefix sum of A[1, L - 1] = l 
+
+The prefix sum of this segment = r - l (mod K) = S
+
+Now, this subarray is good if 
+
+1. S = 0 
+2. R1 exists in this subarray 
+3. R2 exists in this subarray
+
+-----
+
+We are only interested in the longest subarray so for 
+each possible value of (l, r), we will only check the largest subarray 
+
+1. The earliest occurence of l 
+2. The last occurence of r 
+
+If (r - l) is a good subarray, then the largest subarray of (r - l) 
+is also a good subarray 
+
+(The sum is the same and if a smaller subarray contains R1/R2, the larger subarray will also contain it) 
+
+----
+
+Furthermore, in order to check for the existence of R1, R2 
+
+We can maintain a set of indices for each of the possible elements. 
+
+upper_bound(l) <= r 
+
+-----
+
+class Solution
+{
+    private: 
+    int is_present(set <int> &S, int left, int right)
+    {
+        auto it = S.upper_bound(left); 
+        return (it != S.end() && *it <= right);
+    }
+
+    public:
+    int longestSubarray(vector<int>& nums, int k) 
+    {
+        long long sum = 0; 
+        int answer = 0;
+        const int ABSENT = -2;
+        vector <set <int>> indices(k);
+        vector <int> earliest_occurence(k, ABSENT), latest_occurence(k, ABSENT);
+        earliest_occurence[0] = -1;
+        for(int i = 0; i < nums.size(); i++)
+        {
+            long long current = nums[i];
+            if(nums[i] < 0)
+            {
+                long long oo = 1e9;
+                current += oo*k;
+            }
+
+            current %= k;
+            
+            sum += current; 
+            sum %= k;
+
+            if(earliest_occurence[sum] == ABSENT)
+            {
+                earliest_occurence[sum] = i;
+            }
+            latest_occurence[sum] = i;
+
+            indices[current].insert(i);
+        }
+
+        for(int r = 0; r < k; r++)
+        {
+            for(int l = 0; l < k; l++)
+            {
+                if(earliest_occurence[l] == ABSENT || latest_occurence[r] == ABSENT)
+                {
+                    continue;
+                }
+
+                int segment_sum = (r - l + k)%k;
+                int segment_length = latest_occurence[r] - earliest_occurence[l];
+
+                if(segment_sum == 0)
+                {
+                    answer = max(answer, segment_length);
+                    continue;
+                }
+
+                int r1 = (segment_sum%2 == 0 ? segment_sum/2 : -1); 
+                int r2 = ((segment_sum + k)%2 == 0 ? (segment_sum + k)/2 : -1);
+                
+                if(r1 != -1 && is_present(indices[r1], earliest_occurence[l], latest_occurence[r]))
+                {
+                    answer = max(answer, segment_length);
+                }
+
+                if(r2 != -1 && is_present(indices[r2], earliest_occurence[l], latest_occurence[r]))
+                {
+                    answer = max(answer, segment_length);
+                }
+            }
+        }
+
+        return answer;
+    }
+};
