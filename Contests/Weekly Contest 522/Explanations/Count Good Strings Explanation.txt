@@ -97,13 +97,10 @@ class Solution
     {
         vector <vector <int> > multiplier{{1, 1}, 
                                           {1, 0}}; 
-        vector <vector <int> > final_multiplier{{1, 1}, 
-                                                {1, 0}}; 
-        final_multiplier = power(multiplier, n - 1, mod); 
+        vector <vector <int> > final_multiplier = power(multiplier, n - 1, mod); 
 
-        vector <vector <int> > product{{0}, {0}}; 
         vector <vector <int> > base{{1}, {0}}; 
-        product = multiply(final_multiplier, base, mod);
+        vector <vector <int> >  product = multiply(final_multiplier, base, mod);
 
         return product[0][0];
     }
