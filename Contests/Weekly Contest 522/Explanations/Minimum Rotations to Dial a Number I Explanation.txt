@@ -1,0 +1,25 @@
+There are two routes from x -> y 
+
+One is |x - y|. And the other is 10 - |x - y|. 
+
+Choose the route which has the lower cost. 
+
+-----
+
+class Solution {
+public:
+    int minRotations(string s) 
+    {
+        int current = 0, prefix_steps = 0;
+        for(int i = 0; i < s.size(); i++)
+        {
+            int steps_here = abs(current - (s[i] - '0'));
+            steps_here = min(steps_here, 10 - steps_here);
+            
+            prefix_steps += steps_here;
+            current = s[i] - '0';
+        }    
+
+        return prefix_steps;
+    }
+};

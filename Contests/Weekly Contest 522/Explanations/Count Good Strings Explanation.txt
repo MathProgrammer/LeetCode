@@ -1,0 +1,119 @@
+The answer is related to Fibonacci numbers. 
+
+----
+
+Let us construct a bijection between Fibonacci numbers and 
+the number of binary strings with no even runs. 
+
+Let  C(n) be the number of strings of length n. 
+
+C(n) = C(n - 1) + C(n - 3) + C(n - 5) + ... + 
+C(n - 2) = C(n - 3) + C(n - 5) + .... + 
+
+Therefore, C(n) = C(n - 1) + C(n - 2) 
+
+This is the Fibonacci recurrence. 
+
+Additionally, there are two choices for each letter 
+
+so C(n) = 2F(n) 
+
+C(1) = 2, C(2) = 2
+
+This is the Fibonacci sequence with the initial terms (1, 1)
+
+----
+
+Now, we have to use matrix exponentation to compute the Fibonacci number quickly. 
+
+We can express the Fibonacci reoccurence in a matrix form 
+
+F(n)     = | 1 1 | | F(n - 1) |
+F(n - 1) = | 1 0 | | F(n - 2) | 
+
+Let the multiplier matrix be 
+
+M = | 1 1 | 
+    | 1 0 | 
+
+It is 
+
+F(n) = M F(n - 1)
+F(n) = M^{n - 1} F(1)
+
+F(1) = | F(1) | = | 1 |
+       | F(0) |   | 0 |
+
+We can use binary exponentation to compute M^{n - 1} quickly. 
+
+-----
+
+class Solution 
+{
+    private: 
+    vector <vector <int> > multiply(
+                  vector <vector <int> > &A, 
+                  vector <vector <int> > &B, 
+                  int mod)
+    {
+        vector <vector <int> > product(A.size(), vector <int> (B[0].size()));
+        for(int r = 0; r < A.size(); r++)
+        {
+            for(int c = 0; c < B[0].size(); c++)
+            {
+                for(int i = 0; i < A[r].size(); i++)
+                {
+                    product[r][c] += (A[r][i]*1LL*B[i][c])%mod; 
+                    product[r][c] %= mod;
+                }
+            }
+        }
+
+        return product;
+    }
+    
+    vector <vector <int> > power(
+               vector <vector <int> > &multiplier, 
+               long long power,
+               int mod)
+    {
+        vector <vector <int> > answer{{1, 0}, 
+                                      {0, 1}};
+        while(power > 0)
+        {
+            if(power%2 == 1)
+            {
+                answer = multiply(answer, multiplier, mod);
+            }
+
+            power = power/2; 
+            multiplier = multiply(multiplier, multiplier, mod);
+        }
+
+        return answer;
+    }
+    
+    long long get_fibo(long long n, int mod)
+    {
+        vector <vector <int> > multiplier{{1, 1}, 
+                                          {1, 0}}; 
+        vector <vector <int> > final_multiplier{{1, 1}, 
+                                                {1, 0}}; 
+        final_multiplier = power(multiplier, n - 1, mod); 
+
+        vector <vector <int> > product{{0}, {0}}; 
+        vector <vector <int> > base{{1}, {0}}; 
+        product = multiply(final_multiplier, base, mod);
+
+        return product[0][0];
+    }
+
+    public:
+    int countGoodStrings(long long n) 
+    {
+        const int MOD = 1e9 + 7;
+        long long fibo = get_fibo(n, MOD); 
+        long long answer = (2*fibo)%MOD;
+        return answer;
+    }
+};
